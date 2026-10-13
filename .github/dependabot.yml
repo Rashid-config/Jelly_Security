@@ -1,0 +1,20 @@
+version: 2
+updates:
+  # GitHub Actions used by the build and release workflows.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # NuGet test dependencies. The Jellyfin.Controller / Jellyfin.Model packages
+  # must stay on the target ABI version, so only the test stack is allowed to
+  # move; Jellyfin package updates are done deliberately with a new targetAbi.
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "Jellyfin.Controller"
+      - dependency-name: "Jellyfin.Model"

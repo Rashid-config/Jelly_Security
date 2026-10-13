@@ -1,0 +1,94 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-test-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Build
+        run: dotnet build Jellyfin.Plugin.JellySecurity.slnx -c Release --nologo
+
+      - name: Test
+        run: dotnet test Jellyfin.Plugin.JellySecurity.slnx -c Release --nologo --verbosity normal
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Package
+        run: |
+          zip -j jelly-security-${{ steps.version.outputs.VERSION }}.zip \
+            src/Jellyfin.Plugin.JellySecurity/bin/Release/net10.0/Jellyfin.Plugin.JellySecurity.dll
+
+      - name: Compute checksum
+        id: checksum
+        run: |
+          CHECKSUM=$(md5sum jelly-security-${{ steps.version.outputs.VERSION }}.zip | awk '{print toupper($1)}')
+          echo "CHECKSUM=$CHECKSUM" >> "$GITHUB_OUTPUT"
+          echo "Checksum: $CHECKSUM"
+
+      - name: Create release
+        id: release
+        uses: softprops/action-gh-release@v3
+        with:
+          name: ${{ github.ref_name }}
+          files: jelly-security-${{ steps.version.outputs.VERSION }}.zip
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+
+      - name: Verify asset uploaded
+        run: |
+          ASSET_URL="https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/jelly-security-${{ steps.version.outputs.VERSION }}.zip"
+          echo "Asset URL: $ASSET_URL"
+          echo "Checksum: ${{ steps.checksum.outputs.CHECKSUM }}"
+          echo "Release created at: ${{ steps.release.outputs.url }}"
+
+      - name: Update manifest
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          CHECKSUM="${{ steps.checksum.outputs.CHECKSUM }}"
+          TAG="${{ github.ref_name }}"
+          REPO="${{ github.repository }}"
+          SOURCE_URL="https://github.com/${REPO}/releases/download/${TAG}/jelly-security-${VERSION}.zip"
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%S.0000000Z")
+
+          # Use Python to insert the new version entry at the top of the versions array.
+          python3 -c "
+          import json, sys
+          with open('manifest.json', 'r') as f:
+              data = json.load(f)
+          entry = {
+              'version': '${VERSION}',
+              'changelog': 'Automated release. See GitHub release notes for details.',
+              'targetAbi': '12.2.0.0',
+              'sourceUrl': '${SOURCE_URL}',
+              'checksum': '${CHECKSUM}',
+              'timestamp': '${TIMESTAMP}'
+          }
+          data[0]['versions'].insert(0, entry)
+          with open('manifest.json', 'w') as f:
+              json.dump(data, f, indent=2)
+          print('manifest.json updated with version ${VERSION}')
+          "
+
+          # Commit as the repository owner, not github-actions[bot], so the
+          # contributors page stays accurate.
+          git config user.name "RASHID AL SAIDI"
+          git config user.email "Rashid-config@users.noreply.github.com"
+          git add manifest.json
+          git commit -m "Update manifest for ${VERSION}" || echo "No manifest changes to commit"
+          git push origin HEAD:main || echo "Manifest push skipped (may already be on main)"

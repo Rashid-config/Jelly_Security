@@ -1,0 +1,29 @@
+name: Feature request
+description: Suggest a protection or a dashboard improvement.
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the attack or the gap you want covered, not just the feature.
+      placeholder: "e.g. Bots keep probing /QuickConnect even though ..."
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like to see?
+      placeholder: "e.g. An optional per-username attempt cap that ..."
+
+  - type: checkboxes
+    id: fit
+    attributes:
+      label: Design check
+      description: |
+        Jelly Security follows two rules: playback is never touched, and every
+        enforcement feature starts off by default (opt-in).
+      options:
+        - label: This does not delay, classify, or block playback or streaming
+          required: true
+        - label: This can be off by default without losing its value
+          required: false

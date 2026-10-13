@@ -1,0 +1,92 @@
+[
+  {
+    "guid": "8b4e2c1a-6d3f-4a19-9e2b-7c5f1d8a0b34",
+    "name": "Jelly Security",
+    "overview": "Optional sign-in protection for Jellyfin 12.2. Playback is left alone.",
+    "description": "Watches sign-in, keeps plugin-owned records, and can slow, pause, or block sign-in traffic when an administrator enables those options. Jellyfin still checks the password.",
+    "owner": "RASHID AL SAIDI",
+    "category": "General",
+    "versions": [
+      {
+        "version": "0.21.1.0",
+        "changelog": "Automated release. See GitHub release notes for details.",
+        "targetAbi": "12.2.0.0",
+        "sourceUrl": "https://github.com/Rashid-config/Jelly_Security/releases/download/v0.21.1.0/jelly-security-0.21.1.0.zip",
+        "checksum": "AC12EE34F881C84CA64D6026AEFE101F",
+        "timestamp": "2026-10-12T17:08:53.0000000Z"
+      },
+      {
+        "version": "0.21.0.0",
+        "changelog": "Automated release. See GitHub release notes for details.",
+        "targetAbi": "12.2.0.0",
+        "sourceUrl": "https://github.com/Rashid-config/Jelly_Security/releases/download/v0.21.0.0/jelly-security-0.21.0.0.zip",
+        "checksum": "7F95F8AB250A712715CDB08EDC90E72C",
+        "timestamp": "2026-10-12T16:52:52.0000000Z"
+      },
+      {
+        "version": "0.20.0.0",
+        "changelog": "Automated release. See GitHub release notes for details.",
+        "targetAbi": "12.2.0.0",
+        "sourceUrl": "https://github.com/Rashid-config/Jelly_Security/releases/download/v0.20.0.0/jelly-security-0.20.0.0.zip",
+        "checksum": "0E80A7CD2B543796793FD0A7800AF73F",
+        "timestamp": "2026-10-12T16:36:10.0000000Z"
+      },
+      {
+        "version": "0.19.0.0",
+        "changelog": "Automated release. See GitHub release notes for details.",
+        "targetAbi": "12.2.0.0",
+        "sourceUrl": "https://github.com/Rashid-config/Jelly_Security/releases/download/v0.19.0.0/jelly-security-0.19.0.0.zip",
+        "checksum": "CD52216A80EF6DCF6A8768AB2F722B6A",
+        "timestamp": "2026-10-12T15:42:40.0000000Z"
+      },
+      {
+        "version": "0.18.0.0",
+        "changelog": "Live dashboard via Server-Sent Events: the page updates instantly when a sign-in event, ban, or incident fires. Falls back to 30s polling if SSE is unavailable.",
+        "targetAbi": "12.2.0.0",
+        "sourceUrl": "https://github.com/Rashid-config/Jelly_Security/releases/download/v0.18.0.0/jelly-security-0.18.0.0.zip",
+        "checksum": "96274120DB80DBF2F77E203AEC8CA148",
+        "timestamp": "2026-10-12T19:30:00.0000000Z"
+      },
+      {
+        "version": "0.17.0.0",
+        "changelog": "Attack timeline: groups failed and blocked sign-in attempts by source address into chronological attack stories. Each story shows the sequence of attempts, detected patterns, and any ban applied. Read-only, built on demand from existing events.",
+        "targetAbi": "12.2.0.0",
+        "sourceUrl": "https://github.com/Rashid-config/Jelly_Security/releases/download/v0.17.0.0/jelly-security-0.17.0.0.zip",
+        "checksum": "0D47C4F11102FE9DDFFB1707A2645782",
+        "timestamp": "2026-10-12T19:07:00.0000000Z"
+      },
+      {
+        "version": "0.16.0.0",
+        "changelog": "Challenge unrecognized clients: a CAPTCHA opt-in requires a valid token from clients with no recognizable User-Agent. Automatic IPv6 /64 prefix bans: pause the whole end-user subnet instead of skipping the ban. Both off by default.",
+        "targetAbi": "12.2.0.0",
+        "sourceUrl": "https://github.com/Rashid-config/Jelly_Security/releases/download/v0.16.0.0/jelly-security-0.16.0.0.zip",
+        "checksum": "1075F9248DD2AEDCA8047109B5F58E8B",
+        "timestamp": "2026-10-12T18:30:00.0000000Z"
+      },
+      {
+        "version": "0.15.1.0",
+        "changelog": "Dashboard fix: sign-in and detail tables keep short columns on one line and extend horizontally with a scrollbar instead of crushing text onto new lines.",
+        "targetAbi": "12.2.0.0",
+        "sourceUrl": "https://github.com/Rashid-config/Jelly_Security/releases/download/v0.15.1.0/jelly-security-0.15.1.0.zip",
+        "checksum": "006F5D103BD5C27E5FC8C0D36B251A44",
+        "timestamp": "2026-10-11T23:10:00.0000000Z"
+      },
+      {
+        "version": "0.15.0.0",
+        "changelog": "Country blocks: an Addresses-tab table that blocks sign-in from administrator-listed country ranges. Ranges stay editable CIDR text \u2014 fill a row from the local geo file or paste a list. Enforced like a manual ban, so admin and monitoring networks stay safe.",
+        "targetAbi": "12.2.0.0",
+        "sourceUrl": "https://github.com/Rashid-config/Jelly_Security/releases/download/v0.15.0.0/jelly-security-0.15.0.0.zip",
+        "checksum": "7E00029706552D75EF13F07FFED66A4E",
+        "timestamp": "2026-10-11T22:30:00.0000000Z"
+      },
+      {
+        "version": "0.14.0.0",
+        "changelog": "Initial public release. 6 sign-in controls (password delay, account cooldown, lockout watch, browser challenge, honeypot ban, Quick Connect protection), 6 pattern detectors (brute force, distributed, spray, enumeration, honeypot, admin target), manual and automatic IP bans with proxy trust, session watch with non-playing device sign-out, edge proxy snippet generator (Nginx, Caddy, Cloudflare), block-list channel for proxy sync, webhook alerts with SSRF protection, backup/restore with secret redaction, dashboard with live status and active enforcement.",
+        "targetAbi": "12.2.0.0",
+        "sourceUrl": "https://github.com/Rashid-config/Jelly_Security/releases/download/v0.14.0.0/jelly-security-0.14.0.0.zip",
+        "checksum": "EB8EA5621B4C84E284EE7192FA21DE80",
+        "timestamp": "2026-10-11T20:00:00.0000000Z"
+      }
+    ]
+  }
+]

@@ -1,0 +1,82 @@
+name: Bug report
+description: Something in Jelly Security is not working as documented.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Please fill in what you can — the versions and the
+        reproduction steps are the two pieces that matter most.
+
+        **Do not paste secrets** (CAPTCHA keys, edge shared keys, webhook URLs,
+        tokens, or passwords) into this issue. Redact them first.
+
+  - type: input
+    id: jellyfin-version
+    attributes:
+      label: Jellyfin Server version
+      description: Shown on the Jellyfin dashboard, e.g. 12.2.0
+      placeholder: "12.2.0"
+    validations:
+      required: true
+
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Jelly Security version
+      description: Shown on the plugin card in the Jellyfin dashboard
+      placeholder: "0.21.1.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: setup
+    attributes:
+      label: How do clients reach the server?
+      multiple: true
+      options:
+        - Direct connection (no proxy)
+        - Reverse proxy (nginx)
+        - Reverse proxy (Caddy)
+        - Reverse proxy (Apache)
+        - Cloudflare / CDN
+        - Other proxy or tunnel
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what you saw instead.
+      placeholder: |
+        Steps to reproduce:
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Who was affected?
+      description: Did this block sign-in, affect playback, or only show wrong information on the dashboard?
+      placeholder: "e.g. Users could still sign in, but the dashboard showed no events."
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log lines
+      description: |
+        Jellyfin log lines from the time it happened (Dashboard → Logs).
+        Remove IP addresses, usernames, and tokens if you do not want them public.
+      render: text
+
+  - type: checkboxes
+    id: checked
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for the same problem
+          required: true
+        - label: I removed secrets, tokens, and private addresses from anything I pasted
+          required: true

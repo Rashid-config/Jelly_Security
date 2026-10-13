@@ -1,0 +1,17 @@
+bin/
+obj/
+.vs/
+.idea/
+*.user
+*.suo
+dist/
+artifacts/
+TestResults/
+*.log
+.DS_Store
+# Never commit secrets or environment files
+.env
+.env.*
+*.secret
+secrets.json
+test-credentials.json

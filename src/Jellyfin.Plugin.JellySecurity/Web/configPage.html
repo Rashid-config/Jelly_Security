@@ -1,0 +1,2932 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Jelly Security</title>
+</head>
+<body>
+    <div id="JellySecurityPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-checkbox,emby-select" lang="en" dir="ltr">
+        <style>
+            #JellySecurityPage .inputContainer,
+            #JellySecurityPage .selectContainer { margin: .7rem 0; }
+            #JellySecurityPage .inputLabel,
+            #JellySecurityPage .selectLabel { display: block; margin-bottom: .25rem; }
+            #JellySecurityPage input[type="text"],
+            #JellySecurityPage input[type="number"],
+            #JellySecurityPage input[type="password"],
+            #JellySecurityPage select,
+            #JellySecurityPage textarea {
+                display: block;
+                width: min(36rem, 100%);
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+            #JellySecurityPage .js-now,
+            #JellySecurityPage .js-goal {
+                border: 1px solid color-mix(in srgb, currentColor 16%, transparent);
+                border-radius: 12px;
+                padding: 1rem 1.1rem .4rem;
+                margin: 0 0 .85rem;
+            }
+            #JellySecurityPage .js-banner {
+                font-size: 1.15rem;
+                margin: 0 0 .35rem;
+                padding: .5rem .7rem;
+                border-radius: 8px;
+                background: color-mix(in srgb, currentColor 8%, transparent);
+            }
+            #JellySecurityPage .js-banner.is-ok {
+                background: color-mix(in srgb, #27ae60 14%, transparent);
+                border: 1px solid color-mix(in srgb, #27ae60 40%, transparent);
+            }
+            #JellySecurityPage .js-banner.is-warn {
+                background: color-mix(in srgb, #f39c12 16%, transparent);
+                border: 1px solid color-mix(in srgb, #f39c12 45%, transparent);
+            }
+            #JellySecurityPage .js-banner.is-alert {
+                background: color-mix(in srgb, #e74c3c 16%, transparent);
+                border: 1px solid color-mix(in srgb, #e74c3c 45%, transparent);
+            }
+            #JellySecurityPage .js-active-enforcement {
+                margin: .9rem 0;
+                padding: .7rem .8rem;
+                border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+                border-radius: 10px;
+                background: color-mix(in srgb, currentColor 4%, transparent);
+            }
+            #JellySecurityPage .js-active-enforcement h2 {
+                font-size: 1.05rem;
+                margin: 0 0 .35rem;
+            }
+            #JellySecurityPage .js-active-enforcement.is-empty {
+                opacity: .7;
+            }
+            #JellySecurityPage .js-active-row {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: .4rem;
+                margin: .35rem 0;
+                padding: .45rem .55rem;
+                border-radius: 6px;
+                border: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+            }
+            #JellySecurityPage .js-active-row .js-active-kind {
+                display: inline-block;
+                padding: .12rem .45rem;
+                border-radius: 3px;
+                font-size: .75rem;
+                font-weight: 600;
+            }
+            #JellySecurityPage .js-active-row .js-active-kind.k-ban { background: color-mix(in srgb, #e74c3c 22%, transparent); }
+            #JellySecurityPage .js-active-row .js-active-kind.k-pause { background: color-mix(in srgb, #f39c12 22%, transparent); }
+            #JellySecurityPage .js-active-row .js-active-kind.k-scan { background: color-mix(in srgb, #9b59b6 22%, transparent); }
+            #JellySecurityPage .js-active-row .js-active-info { flex: 1; min-width: 14rem; }
+            #JellySecurityPage .js-active-row .js-active-lift {
+                appearance: none;
+                background: color-mix(in srgb, currentColor 10%, transparent);
+                border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+                border-radius: 4px;
+                color: inherit;
+                padding: .25rem .6rem;
+                font-size: .82rem;
+                cursor: pointer;
+            }
+            #JellySecurityPage .js-active-row .js-active-lift:hover { background: color-mix(in srgb, currentColor 18%, transparent); }
+            #JellySecurityPage .js-tab-hint {
+                font-size: .88rem;
+                opacity: .62;
+                margin: .1rem 0 .9rem;
+            }
+            #JellySecurityPage .js-save-bar {
+                position: sticky;
+                bottom: 0;
+                background: color-mix(in srgb, currentColor 4%, transparent);
+                backdrop-filter: blur(4px);
+                padding: .7rem 1.1rem;
+                margin: 0 -1.1rem -.4rem;
+                border-radius: 0 0 12px 12px;
+                border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+                z-index: 5;
+            }
+            #JellySecurityPage .js-info-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: .15rem .6rem;
+                padding: .3rem 0;
+                line-height: 1.5;
+            }
+            #JellySecurityPage .js-info-row .js-info-label { font-weight: 600; opacity: .8; }
+            #JellySecurityPage .js-info-row .js-info-val { opacity: .95; }
+            #JellySecurityPage details {
+                margin: .4rem 0 1rem;
+                border: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+                border-radius: 8px;
+                padding: .5rem .8rem;
+            }
+            #JellySecurityPage details[open] { padding-bottom: .8rem; }
+            #JellySecurityPage summary {
+                cursor: pointer;
+                margin: .1rem 0;
+                font-weight: 600;
+                opacity: .85;
+            }
+            #JellySecurityPage summary:hover { opacity: 1; }
+            #JellySecurityPage .js-meters {
+                display: flex;
+                flex-wrap: wrap;
+                gap: .5rem;
+                margin: .8rem 0 .4rem;
+            }
+            #JellySecurityPage .js-meter,
+            #JellySecurityPage button.js-meter {
+                appearance: none;
+                -webkit-appearance: none;
+                background: color-mix(in srgb, currentColor 6%, transparent);
+                box-shadow: none;
+                color: inherit;
+                border: 1px solid transparent;
+                border-radius: 8px;
+                min-width: 8.5rem;
+                min-height: 0;
+                height: auto;
+                width: auto;
+                margin: 0;
+                padding: .55rem .7rem;
+                font: inherit;
+                letter-spacing: normal;
+                text-transform: none;
+                line-height: 1.3;
+                text-align: start;
+                cursor: pointer;
+            }
+            #JellySecurityPage .js-meter strong { display: block; font-size: 1.15rem; }
+            #JellySecurityPage .js-meter span { opacity: .72; font-size: .85rem; }
+            #JellySecurityPage button.js-meter:hover,
+            #JellySecurityPage button.js-meter:focus-visible {
+                outline: 2px solid color-mix(in srgb, currentColor 45%, transparent);
+                outline-offset: 2px;
+            }
+            #JellySecurityPage button.js-meter.is-selected {
+                border-color: color-mix(in srgb, currentColor 70%, transparent);
+            }
+            #JellySecurityPage .js-detail { margin: .2rem 0 1rem; }
+            #JellySecurityPage .js-detail h2 {
+                margin: .2rem 0 .15rem;
+                font-size: 1.05rem;
+            }
+            #JellySecurityPage button.js-back {
+                appearance: none;
+                -webkit-appearance: none;
+                background: transparent;
+                box-shadow: none;
+                color: inherit;
+                border: 0;
+                border-bottom: 1px solid currentColor;
+                border-radius: 0;
+                min-width: 0;
+                min-height: 0;
+                height: auto;
+                width: auto;
+                margin: 0 0 .7rem;
+                padding: 0 0 .1rem;
+                font: inherit;
+                letter-spacing: normal;
+                text-transform: none;
+                cursor: pointer;
+            }
+            #JellySecurityPage button.js-back:focus-visible {
+                outline: 2px solid color-mix(in srgb, currentColor 45%, transparent);
+                outline-offset: 2px;
+            }
+            #JellySecurityPage .js-detail-scroll {
+                overflow-x: auto;
+                max-width: 100%;
+            }
+            #JellySecurityPage .js-detail-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: .2rem 0 1rem;
+            }
+            #JellySecurityPage .js-detail-table th,
+            #JellySecurityPage .js-detail-table td {
+                text-align: start;
+                vertical-align: top;
+                padding: .4rem .55rem;
+                border-bottom: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+                font-weight: 400;
+                white-space: nowrap;
+            }
+            #JellySecurityPage .js-detail-table .js-detail-grow {
+                white-space: normal;
+                word-break: break-word;
+                min-width: 16rem;
+            }
+            #JellySecurityPage .js-detail-table th { font-weight: 600; }
+            #JellySecurityPage #DashboardOverview[hidden],
+            #JellySecurityPage #DashboardDetail[hidden],
+            #JellySecurityPage #DashboardSnippet[hidden],
+            #JellySecurityPage #DashboardDetailFilter[hidden],
+            #JellySecurityPage #DashboardRows[hidden] { display: none; }
+
+            /* Attack timeline */
+            #JellySecurityPage .js-timeline-story {
+                border: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+                border-radius: .5rem;
+                margin: .5rem 0;
+                overflow: hidden;
+            }
+            #JellySecurityPage .js-timeline-header {
+                display: flex;
+                flex-wrap: wrap;
+                gap: .4rem .8rem;
+                align-items: center;
+                padding: .6rem .8rem;
+                background: color-mix(in srgb, currentColor 6%, transparent);
+                cursor: pointer;
+                user-select: none;
+            }
+            #JellySecurityPage .js-timeline-header:hover {
+                background: color-mix(in srgb, currentColor 10%, transparent);
+            }
+            #JellySecurityPage .js-timeline-subject {
+                font-weight: 600;
+                font-size: 1rem;
+            }
+            #JellySecurityPage .js-timeline-badge {
+                display: inline-block;
+                padding: .1rem .45rem;
+                border-radius: .3rem;
+                font-size: .8rem;
+                font-weight: 500;
+                line-height: 1.4;
+            }
+            #JellySecurityPage .js-timeline-badge.failed {
+                background: color-mix(in srgb, #e53935 18%, transparent);
+                color: #ef9a9a;
+            }
+            #JellySecurityPage .js-timeline-badge.blocked {
+                background: color-mix(in srgb, #f57c00 18%, transparent);
+                color: #ffcc80;
+            }
+            #JellySecurityPage .js-timeline-badge.banned {
+                background: color-mix(in srgb, #d32f2f 22%, transparent);
+                color: #ef5350;
+            }
+            #JellySecurityPage .js-timeline-badge.risk-high {
+                background: color-mix(in srgb, #ab47bc 18%, transparent);
+                color: #ce93d8;
+            }
+            #JellySecurityPage .js-timeline-badge.risk-critical {
+                background: color-mix(in srgb, #d32f2f 25%, transparent);
+                color: #ef5350;
+            }
+            #JellySecurityPage .js-timeline-meta {
+                font-size: .85rem;
+                opacity: .8;
+            }
+            #JellySecurityPage .js-timeline-body {
+                display: none;
+                padding: .4rem .8rem .6rem 2.2rem;
+            }
+            #JellySecurityPage .js-timeline-body.open { display: block; }
+            #JellySecurityPage .js-timeline-step {
+                position: relative;
+                padding: .25rem 0 .25rem 1.2rem;
+                border-left: 2px solid color-mix(in srgb, currentColor 12%, transparent);
+                margin-left: .2rem;
+            }
+            #JellySecurityPage .js-timeline-step::before {
+                content: '';
+                position: absolute;
+                left: -.35rem;
+                top: .6rem;
+                width: .5rem;
+                height: .5rem;
+                border-radius: 50%;
+                background: color-mix(in srgb, currentColor 30%, transparent);
+            }
+            #JellySecurityPage .js-timeline-step.ban::before {
+                background: #ef5350;
+            }
+            #JellySecurityPage .js-timeline-step.blocked::before {
+                background: #ffcc80;
+            }
+            #JellySecurityPage .js-timeline-step.failed::before {
+                background: #ef9a9a;
+            }
+            #JellySecurityPage .js-timeline-step-time {
+                font-size: .8rem;
+                opacity: .7;
+                white-space: nowrap;
+            }
+            #JellySecurityPage .js-timeline-step-text {
+                font-size: .9rem;
+            }
+            #JellySecurityPage .js-timeline-step-user {
+                font-weight: 500;
+            }
+            #JellySecurityPage .js-goal h2 { margin: .2rem 0 .15rem; font-size: 1.05rem; }
+            #JellySecurityPage [data-gate] { display: none; }
+            #JellySecurityPage [data-gate].is-on { display: block; }
+            #JellySecurityPage pre { white-space: pre-wrap; margin: .4rem 0 1rem; }
+            #JellySecurityPage #EdgeSnippet { max-height: 24rem; overflow: auto; border: 1px solid color-mix(in srgb, currentColor 12%, transparent); border-radius: 6px; padding: .6rem; white-space: pre-wrap; word-break: break-all; }
+            #JellySecurityPage #RefreshEdgeSnippet { margin-right: .4rem; }
+            #JellySecurityPage .js-tabs {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0 .35rem;
+                margin: .2rem 0 1.1rem;
+                border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+            }
+            #JellySecurityPage .js-tab {
+                appearance: none;
+                -webkit-appearance: none;
+                background: transparent;
+                box-shadow: none;
+                color: inherit;
+                border: 0;
+                border-bottom: 2px solid transparent;
+                border-radius: 0;
+                min-width: 0;
+                min-height: 0;
+                height: auto;
+                width: auto;
+                margin: 0 0 -1px;
+                padding: .7rem .55rem;
+                font: inherit;
+                font-size: .95rem;
+                letter-spacing: normal;
+                text-transform: none;
+                line-height: 1.2;
+                cursor: pointer;
+                opacity: .68;
+            }
+            #JellySecurityPage .js-tab:hover,
+            #JellySecurityPage .js-tab:focus-visible {
+                opacity: 1;
+                outline: 2px solid color-mix(in srgb, currentColor 45%, transparent);
+                outline-offset: 2px;
+            }
+            #JellySecurityPage .js-tab.is-active {
+                opacity: 1;
+                font-weight: 600;
+                border-bottom-color: currentColor;
+            }
+            #JellySecurityPage .js-panel:not(.is-active) { display: none; }
+            #JellySecurityPage .js-goal h3 {
+                margin: .9rem 0 .25rem;
+                font-size: .98rem;
+                font-weight: 600;
+            }
+            #JellySecurityPage .js-fit-label {
+                margin: .55rem 0 .1rem;
+                font-weight: 600;
+            }
+            #JellySecurityPage .js-fit ul {
+                margin: 0;
+                padding-left: 1.15rem;
+            }
+            #JellySecurityPage .js-fit li {
+                margin: .18rem 0;
+                line-height: 1.4;
+            }
+            #JellySecurityPage .js-last-updated {
+                font-size: .82rem;
+                opacity: .62;
+                margin: .3rem 0 .8rem;
+            }
+            #JellySecurityPage .js-meter.is-alert strong { color: #ffb4a8; }
+            #JellySecurityPage .js-meter.is-warn strong { color: #ffd966; }
+            #JellySecurityPage .js-meter.is-ok strong { color: #a8e6a8; }
+            #JellySecurityPage .js-ban-row { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; margin: .3rem 0; padding: .4rem .5rem; border: 1px solid color-mix(in srgb, currentColor 12%, transparent); border-radius: 6px; }
+            #JellySecurityPage .js-ban-row .js-ban-info { flex: 1; min-width: 12rem; }
+            #JellySecurityPage .js-ban-row.is-ended { opacity: .45; border-style: dashed; }
+            #JellySecurityPage .js-ban-row.is-ended .js-ban-remove { display: none; }
+            #JellySecurityPage .js-ban-remove { appearance: none; background: color-mix(in srgb, #e74c3c 14%, transparent); border: 1px solid color-mix(in srgb, #e74c3c 40%, transparent); border-radius: 4px; color: inherit; padding: .25rem .55rem; font-size: .82rem; cursor: pointer; }
+            #JellySecurityPage .js-ban-remove:hover { background: color-mix(in srgb, #e74c3c 25%, transparent); }
+            #JellySecurityPage .js-ban-tag { display: inline-block; padding: .1rem .4rem; border-radius: 3px; font-size: .75rem; font-weight: 600; }
+            #JellySecurityPage .js-ban-tag.is-active { background: color-mix(in srgb, #e74c3c 20%, transparent); }
+            #JellySecurityPage .js-ban-tag.is-ended { background: color-mix(in srgb, currentColor 10%, transparent); }
+            #JellySecurityPage .js-geo-row { margin: .5rem 0; padding: .5rem .6rem; border: 1px solid color-mix(in srgb, currentColor 12%, transparent); border-radius: 6px; }
+            #JellySecurityPage .js-geo-head { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+            #JellySecurityPage .js-geo-head input[type=text] { flex: 1; min-width: 10rem; }
+            #JellySecurityPage .js-geo-ranges { width: 100%; margin-top: .45rem; font-family: monospace; font-size: .85rem; background: color-mix(in srgb, currentColor 4%, transparent); border: 1px solid color-mix(in srgb, currentColor 14%, transparent); border-radius: 4px; color: inherit; padding: .4rem .5rem; }
+            #JellySecurityPage .js-geo-remove { appearance: none; background: color-mix(in srgb, #e74c3c 14%, transparent); border: 1px solid color-mix(in srgb, #e74c3c 40%, transparent); border-radius: 4px; color: inherit; padding: .25rem .55rem; font-size: .82rem; cursor: pointer; }
+            #JellySecurityPage .js-geo-remove:hover { background: color-mix(in srgb, #e74c3c 25%, transparent); }
+            #JellySecurityPage .js-geo-fill { appearance: none; background: color-mix(in srgb, currentColor 8%, transparent); border: 1px solid color-mix(in srgb, currentColor 20%, transparent); border-radius: 4px; color: inherit; padding: .25rem .55rem; font-size: .82rem; cursor: pointer; }
+            #JellySecurityPage .js-geo-fill:hover { background: color-mix(in srgb, currentColor 16%, transparent); }
+        </style>
+        <div data-role="content">
+            <div class="content-primary">
+                <h1>Jelly Security</h1>
+                <form id="JellySecurityForm">
+                    <div id="JellySecurityTabs" class="js-tabs" role="tablist" aria-label="Jelly Security" aria-orientation="horizontal">
+                        <button type="button" class="js-tab is-active" role="tab" id="tab-dashboard" aria-selected="true" aria-controls="panel-dashboard" tabindex="0">Dashboard</button>
+                        <button type="button" class="js-tab" role="tab" id="tab-activity" aria-selected="false" aria-controls="panel-activity" tabindex="-1">Activity</button>
+                        <button type="button" class="js-tab" role="tab" id="tab-signin" aria-selected="false" aria-controls="panel-signin" tabindex="-1">Sign-in</button>
+                        <button type="button" class="js-tab" role="tab" id="tab-detection" aria-selected="false" aria-controls="panel-detection" tabindex="-1">Detection</button>
+                        <button type="button" class="js-tab" role="tab" id="tab-addresses" aria-selected="false" aria-controls="panel-addresses" tabindex="-1">Addresses</button>
+                        <button type="button" class="js-tab" role="tab" id="tab-sessions" aria-selected="false" aria-controls="panel-sessions" tabindex="-1">Sessions</button>
+                        <button type="button" class="js-tab" role="tab" id="tab-edge" aria-selected="false" aria-controls="panel-edge" tabindex="-1">Edge</button>
+                        <button type="button" class="js-tab" role="tab" id="tab-more" aria-selected="false" aria-controls="panel-more" tabindex="-1">More</button>
+                    </div>
+
+                    <div id="panel-dashboard" class="js-panel is-active" role="tabpanel" aria-labelledby="tab-dashboard">
+                        <p class="js-tab-hint">Live overview: counters, active blocks and pauses, and whether the settings fit together. Records and the attack timeline live in the Activity tab.</p>
+                        <section class="js-now" aria-label="What is happening now">
+                            <p class="js-banner" id="modeBanner">Watching sign-in. An address is not blocked for you.</p>
+                            <p class="fieldDescription" id="healthLine"></p>
+                            <p class="fieldDescription">Address trust: <strong id="statProxy">—</strong>. <span id="statState"></span></p>
+                            <p class="js-last-updated" id="lastUpdated">Not loaded yet.</p>
+                            <div class="js-meters" id="DashboardMeters">
+                                <button type="button" class="js-meter" data-detail="attempts" aria-pressed="false"><strong id="statEvents">—</strong><span>sign-in attempts, 24h</span></button>
+                                <button type="button" class="js-meter" data-detail="failed" aria-pressed="false"><strong id="statFailed">—</strong><span>rejected by Jellyfin</span></button>
+                                <button type="button" class="js-meter" data-detail="blocked" aria-pressed="false"><strong id="statBlocked">—</strong><span>stopped here</span></button>
+                                <button type="button" class="js-meter" data-detail="bans" aria-pressed="false"><strong id="statBans">—</strong><span>addresses blocked</span></button>
+                                <button type="button" class="js-meter" data-detail="incidents" aria-pressed="false"><strong id="statIncidents">—</strong><span>patterns noticed, 24h</span></button>
+                                <button type="button" class="js-meter" data-detail="delays" aria-pressed="false"><strong id="statDelays">—</strong><span>password waits active</span></button>
+                                <button type="button" class="js-meter" data-detail="cooldowns" aria-pressed="false"><strong id="statCooldowns">—</strong><span>names paused</span></button>
+                                <button type="button" class="js-meter" data-detail="lockout" aria-pressed="false"><strong id="statLockout">—</strong><span>accounts near lockout</span></button>
+                                <button type="button" class="js-meter" data-detail="sessions" aria-pressed="false"><strong id="statSessions">—</strong><span>unfamiliar sessions</span></button>
+                                <button type="button" class="js-meter" data-detail="edge" aria-pressed="false"><strong id="statEdge">—</strong><span>proxy snippet</span></button>
+                            </div>
+                        </section>
+
+                        <section id="ActiveEnforcement" class="js-active-enforcement" aria-label="Active enforcement right now">
+                            <h2>Active enforcement</h2>
+                            <p class="fieldDescription" id="ActiveEnforcementHint">Addresses and names the plugin is blocking right now. Use the button on each row to lift it immediately.</p>
+                            <div id="ActiveEnforcementTable">Nothing is being enforced right now.</div>
+                        </section>
+
+                        <section id="DashboardDetail" class="js-detail" hidden aria-labelledby="DashboardDetailTitle">
+                            <button type="button" class="js-back" id="DashboardBack">Back to dashboard</button>
+                            <h2 id="DashboardDetailTitle"></h2>
+                            <p class="fieldDescription" id="DashboardDetailCount"></p>
+                            <div id="DashboardDetailFilter" hidden></div>
+                            <div id="DashboardRows"></div>
+                            <div id="DashboardSnippet" hidden>
+                                <p class="fieldDescription" id="DashboardSnippetNote"></p>
+                                <pre id="DashboardSnippetText"></pre>
+                                <button is="emby-button" type="button" id="CopyDashboardSnippet" class="raised emby-button">Copy</button>
+                            </div>
+                        </section>
+
+                        <div id="DashboardOverview">
+                        <article class="js-goal">
+                            <h2>Last 24 hours</h2>
+                            <pre id="ReportBox">No report yet.</pre>
+                            <button is="emby-button" type="button" id="DownloadReport" class="raised emby-button">Download report</button>
+                        </article>
+
+                        <article class="js-goal">
+                            <h2>How the settings fit together</h2>
+                            <div id="PostureList" class="js-fit">Nothing to review.</div>
+                        </article>
+                        </div>
+                    </div>
+
+                    <div id="panel-activity" class="js-panel" role="tabpanel" aria-labelledby="tab-activity" aria-hidden="true">
+                        <p class="js-tab-hint">Saved records: Jellyfin's own sign-in lines, notices, detected patterns, changes you made, the full sign-in list, and per-attack stories.</p>
+                        <article class="js-goal">
+                            <h2>What happened</h2>
+                            <h3>Jellyfin sign-in record</h3>
+                            <p class="fieldDescription">Sign-in and account changes Jellyfin wrote in the last 24 hours. Playback, library updates, and session connect lines are not listed. Jellyfin's saved address is the proxy, so visitor addresses stay in the sign-in list. <span id="JellyfinRecordCount"></span></p>
+                            <pre id="JellyfinRecord">No Jellyfin sign-in record yet.</pre>
+                            <h3>Notices</h3>
+                            <pre id="WarningList">Nothing needs attention.</pre>
+                            <h3>Patterns</h3>
+                            <pre id="IncidentList">No pattern yet.</pre>
+                            <h3>Changes you made</h3>
+                            <pre id="AuditList">No setting change yet.</pre>
+                            <h3>Sign-in list</h3>
+                            <div id="EventFilterHome">
+                            <div class="selectContainer" id="EventFilterBox">
+                                <label class="selectLabel" for="EventOutcome">Show only this result</label>
+                                <select id="EventOutcome" form="JellySecurityEventFilter">
+                                    <option value="">All</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="Succeeded">Succeeded</option>
+                                    <option value="Blocked">Blocked</option>
+                                    <option value="Unknown">Unknown</option>
+                                </select>
+                                <div class="fieldDescription">Filters the list below. This choice is not saved.</div>
+                            </div>
+                            </div>
+                            <button is="emby-button" type="button" id="RefreshEvents" class="raised emby-button">Refresh</button>
+                            <button is="emby-button" type="button" id="ExportEvents" class="raised emby-button">Download CSV</button>
+                            <div id="EventList">No sign-in recorded yet.</div>
+                        </article>
+
+                        <article class="js-goal">
+                            <h2>Attack timeline</h2>
+                            <p class="fieldDescription">Each card below is one attack story — all sign-in attempts, detected patterns, and bans for one address, in order. Click a card to see the full sequence. Only addresses with at least one failed or blocked attempt appear here.</p>
+                            <button is="emby-button" type="button" id="RefreshTimeline" class="raised emby-button">Refresh</button>
+                            <div id="TimelineList">No attack recorded yet.</div>
+                        </article>
+                    </div>
+
+                    <div id="panel-signin" class="js-panel" role="tabpanel" aria-labelledby="tab-signin" aria-hidden="true">
+                        <p class="js-tab-hint">Controls that slow, pause, or challenge sign-in attempts. All start off — turn on what you need, then Save.</p>
+                        <article class="js-goal">
+                            <div class="checkboxContainer checkboxContainer-withDescription">
+                                <label class="emby-checkbox-label">
+                                    <input id="PasswordDelayEnabled" type="checkbox" is="emby-checkbox" />
+                                    <span>Slow repeated password guesses</span>
+                                </label>
+                                <div class="fieldDescription checkboxFieldDescription">After a few wrong passwords, the next try waits 1 second, then 3, then 5. The first try stays immediate. Playback is not delayed.</div>
+                            </div>
+                            <div data-gate="PasswordDelayEnabled">
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="PasswordDelayStepsSeconds">Wait steps, in seconds</label>
+                                    <input id="PasswordDelayStepsSeconds" type="text" is="emby-input" />
+                                    <div class="fieldDescription">Example: 1,3,5. After the last step, that wait stays.</div>
+                                </div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="PasswordDelayCeilingSeconds">Longest wait, in seconds (1–10)</label>
+                                    <input id="PasswordDelayCeilingSeconds" type="number" is="emby-input" min="1" max="10" />
+                                </div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="PasswordDelayAfterFailures">Wrong passwords before the first wait</label>
+                                    <input id="PasswordDelayAfterFailures" type="number" is="emby-input" min="1" />
+                                </div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="PasswordDelayWindowMinutes">Count those failures over this many minutes</label>
+                                    <input id="PasswordDelayWindowMinutes" type="number" is="emby-input" min="1" />
+                                </div>
+                                <div class="checkboxContainer">
+                                    <label class="emby-checkbox-label">
+                                        <input id="PasswordDelayRequireVerifiedAddress" type="checkbox" is="emby-checkbox" />
+                                        <span>Only when the visitor address is trusted</span>
+                                    </label>
+                                </div>
+                                <div class="checkboxContainer">
+                                    <label class="emby-checkbox-label">
+                                        <input id="PasswordDelaySkipPrivilegedNetworks" type="checkbox" is="emby-checkbox" />
+                                        <span>Skip loopback, trusted, admin, and monitoring networks</span>
+                                    </label>
+                                </div>
+                                <h2>Waiting now</h2>
+                                <div id="DelayCounters">No one is waiting.</div>
+                            </div>
+                        </article>
+
+                        <article class="js-goal">
+                            <div class="checkboxContainer checkboxContainer-withDescription">
+                                <label class="emby-checkbox-label">
+                                    <input id="AccountCooldownEnabled" type="checkbox" is="emby-checkbox" />
+                                    <span>Pause a name that is being sprayed</span>
+                                </label>
+                                <div class="fieldDescription checkboxFieldDescription">If the same username fails from several addresses, password sign-in for that name pauses, then returns on its own. The Jellyfin account stays enabled. One address, however many times it fails, is not enough.</div>
+                            </div>
+                            <div data-gate="AccountCooldownEnabled">
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="AccountCooldownMinutes">Pause for this many minutes</label>
+                                    <input id="AccountCooldownMinutes" type="number" is="emby-input" min="1" max="1440" />
+                                </div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="AccountCooldownDistinctIps">Different addresses required (at least 2)</label>
+                                    <input id="AccountCooldownDistinctIps" type="number" is="emby-input" min="2" />
+                                </div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="AccountCooldownFailures">Failures required (at least 2)</label>
+                                    <input id="AccountCooldownFailures" type="number" is="emby-input" min="2" />
+                                </div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="AccountCooldownWindowMinutes">Look for that spray over this many minutes</label>
+                                    <input id="AccountCooldownWindowMinutes" type="number" is="emby-input" min="1" />
+                                </div>
+                                <div class="checkboxContainer">
+                                    <label class="emby-checkbox-label">
+                                        <input id="AccountCooldownSkipPrivilegedNetworks" type="checkbox" is="emby-checkbox" />
+                                        <span>Still allow loopback, trusted, admin, and monitoring networks during the pause</span>
+                                    </label>
+                                </div>
+                                <h2>Paused now</h2>
+                                <div id="CooldownList">No name is paused.</div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="CooldownClearName">Let this name sign in again</label>
+                                    <input id="CooldownClearName" type="text" is="emby-input" />
+                                </div>
+                                <button is="emby-button" type="button" id="ClearCooldownButton" class="raised emby-button">End the pause</button>
+                            </div>
+                        </article>
+
+                        <article class="js-goal">
+                            <div class="checkboxContainer checkboxContainer-withDescription">
+                                <label class="emby-checkbox-label">
+                                    <input id="LockoutWatchEnabled" type="checkbox" is="emby-checkbox" />
+                                    <span>Tell me before Jellyfin locks an account</span>
+                                </label>
+                                <div class="fieldDescription checkboxFieldDescription">Each account is compared with its own lockout limit. A limit of -1, 0, or empty means Jellyfin lockout is off for that account. This page reads the counter and does not change it.</div>
+                            </div>
+                            <div data-gate="LockoutWatchEnabled">
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="LockoutWatchRemaining">Warn when this many tries, or fewer, remain</label>
+                                    <input id="LockoutWatchRemaining" type="number" is="emby-input" min="1" max="100" />
+                                </div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="LockoutWatchCooldownMinutes">Wait this many minutes before warning again</label>
+                                    <input id="LockoutWatchCooldownMinutes" type="number" is="emby-input" min="1" max="1440" />
+                                </div>
+                                <p class="fieldDescription" id="LockoutSummary">Accounts close to their own limit appear here.</p>
+                                <div id="LockoutList">No account is close to its limit.</div>
+                            </div>
+                        </article>
+
+                        <article class="js-goal">
+                            <div class="checkboxContainer checkboxContainer-withDescription">
+                                <label class="emby-checkbox-label">
+                                    <input id="CaptchaEnforceWeb" type="checkbox" is="emby-checkbox" />
+                                    <span>Ask the browser to confirm a person</span>
+                                </label>
+                                <div class="fieldDescription checkboxFieldDescription">The web sign-in form and the forgot-password form show one check. TV apps and unknown clients are not asked, and this check does not block them. Jellyfin’s files on disk stay as they are.</div>
+                            </div>
+                            <div data-gate="CaptchaEnforceWeb">
+                                <div class="selectContainer">
+                                    <label class="selectLabel" for="CaptchaProvider">Check provider</label>
+                                    <select id="CaptchaProvider" is="emby-select">
+                                        <option value="None">None</option>
+                                        <option value="ReCaptcha">Google reCAPTCHA</option>
+                                        <option value="Turnstile">Cloudflare Turnstile</option>
+                                    </select>
+                                </div>
+                                <div class="checkboxContainer">
+                                    <label class="emby-checkbox-label">
+                                        <input id="CaptchaFailOpen" type="checkbox" is="emby-checkbox" />
+                                        <span>Allow sign-in when the provider cannot be reached</span>
+                                    </label>
+                                </div>
+                                <div class="checkboxContainer checkboxContainer-withDescription">
+                                    <label class="emby-checkbox-label">
+                                        <input id="CaptchaChallengeUnknown" type="checkbox" is="emby-checkbox" />
+                                        <span>Block unrecognized clients too</span>
+                                    </label>
+                                    <div class="fieldDescription checkboxFieldDescription">A bot that sends no recognizable User-Agent is normally let through the challenge. Turn this on to require a valid token from those clients as well. Recognized TV apps stay exempt because they cannot render the widget. A bot that spoofs a TV app User-Agent still bypasses this — that path needs a stricter client check.</div>
+                                </div>
+                                <div class="checkboxContainer checkboxContainer-withDescription">
+                                    <label class="emby-checkbox-label">
+                                        <input id="StrictDeviceFingerprint" type="checkbox" is="emby-checkbox" />
+                                        <span>Require a real device ID for app classification</span>
+                                    </label>
+                                    <div class="fieldDescription checkboxFieldDescription">A bot that spoofs a TV app User-Agent is classified as an app and skips the challenge. Real Jellyfin apps always send a DeviceId in the authorization header. Turn this on to downgrade such clients to Unknown — combined with "Block unrecognized clients too," a spoofed app User-Agent is then blocked too. Older or custom clients that never send a DeviceId would also be challenged.</div>
+                                </div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="CaptchaSiteKey">Site key</label>
+                                    <input id="CaptchaSiteKey" type="text" is="emby-input" />
+                                </div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="CaptchaSecret">Secret key</label>
+                                    <input id="CaptchaSecret" type="password" is="emby-input" autocomplete="new-password" />
+                                    <div class="fieldDescription">Leave this blank to keep the saved secret. It is not shown again.</div>
+                                </div>
+                                <p class="fieldDescription" id="CaptchaState"></p>
+                            </div>
+                        </article>
+
+                        <article class="js-goal">
+                            <div class="checkboxContainer checkboxContainer-withDescription">
+                                <label class="emby-checkbox-label">
+                                    <input id="HoneypotInstantBan" type="checkbox" is="emby-checkbox" />
+                                    <span>Treat one use of a decoy name as enough</span>
+                                </label>
+                                <div class="fieldDescription checkboxFieldDescription">Pick a username that matches nobody in Jellyfin. One try of that name from a verified IPv4 address is blocked. A name that belongs to a real user does nothing. This does not depend on Watch only.</div>
+                            </div>
+                            <div class="inputContainer">
+                                <label class="inputLabel" for="HoneypotUsername">Decoy name</label>
+                                <input id="HoneypotUsername" type="text" is="emby-input" />
+                                <div class="fieldDescription">The detector uses this name even without the instant ban. The ban is a separate switch above.</div>
+                            </div>
+                            <div data-gate="HoneypotInstantBan">
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="HoneypotBanMinutes">Block that address for this many minutes</label>
+                                    <input id="HoneypotBanMinutes" type="number" is="emby-input" min="1" max="1440" />
+                                </div>
+                            </div>
+                            <p class="fieldDescription" id="HoneypotState"></p>
+                        </article>
+
+                    </div>
+
+                    <div id="panel-detection" class="js-panel" role="tabpanel" aria-labelledby="tab-detection" aria-hidden="true">
+                        <p class="js-tab-hint">Watch-only signals and the API scan watch. These record what they see; blocking lives in the Sign-in and Addresses tabs.</p>
+                        <article class="js-goal">
+                            <h2>Patterns to notice</h2>
+                            <p class="fieldDescription">These record a signal. They do not block anyone by themselves.</p>
+                            <div class="checkboxContainer"><label class="emby-checkbox-label"><input id="EnableBruteForceDetector" type="checkbox" is="emby-checkbox" /><span>Many failures from one address</span></label></div>
+                            <div class="checkboxContainer"><label class="emby-checkbox-label"><input id="EnableDistributedDetector" type="checkbox" is="emby-checkbox" /><span>One name tried from many addresses</span></label></div>
+                            <div class="checkboxContainer"><label class="emby-checkbox-label"><input id="EnablePasswordSprayDetector" type="checkbox" is="emby-checkbox" /><span>Many names from one address</span></label></div>
+                            <div class="checkboxContainer"><label class="emby-checkbox-label"><input id="EnableEnumerationDetector" type="checkbox" is="emby-checkbox" /><span>A search for usernames</span></label></div>
+                            <div class="checkboxContainer"><label class="emby-checkbox-label"><input id="EnableHoneypotDetector" type="checkbox" is="emby-checkbox" /><span>The decoy name was used</span></label></div>
+                            <div class="checkboxContainer"><label class="emby-checkbox-label"><input id="EnableAdminTargetDetector" type="checkbox" is="emby-checkbox" /><span>A listed admin name was targeted</span></label></div>
+                            <div class="inputContainer">
+                                <label class="inputLabel" for="AdministrativeUsernames">Admin names to watch</label>
+                                <input id="AdministrativeUsernames" type="text" is="emby-input" />
+                                <div class="fieldDescription">Names you list here. The word “admin” is not assumed.</div>
+                            </div>
+                        </article>
+
+                        <article class="js-goal">
+                            <h2>API scan watch</h2>
+                            <p class="fieldDescription">Counts requests to enumeration endpoints (/Users, /Items, /System/Info, /Library, and similar collection routes) per address, before a scanner ever reaches the sign-in form. Playback, posters, downloads, and static files are never counted. The main signal is failed requests — a scanner without a valid token collects 401s; a real client gets 2xx. Admin, monitoring, and trusted networks are never rate-limited.</p>
+                            <div class="checkboxContainer checkboxContainer-withDescription">
+                                <label class="emby-checkbox-label">
+                                    <input id="ReconWatchEnabled" type="checkbox" is="emby-checkbox" />
+                                    <span>Watch for API scanning</span>
+                                </label>
+                                <div class="fieldDescription checkboxFieldDescription">Records a Reconnaissance event and incident when one address floods enumeration endpoints with failed or unauthenticated requests across many paths.</div>
+                            </div>
+                            <div class="checkboxContainer checkboxContainer-withDescription">
+                                <label class="emby-checkbox-label">
+                                    <input id="ReconEnforce" type="checkbox" is="emby-checkbox" />
+                                    <span>Slow down scanners (429)</span>
+                                </label>
+                                <div class="fieldDescription checkboxFieldDescription">Requires a verified client address. An address that crosses the threshold gets 429 replies on enumeration endpoints for the cooldown below. Sign-in and playback are untouched.</div>
+                            </div>
+                            <div class="inputContainer">
+                                <label class="inputLabel" for="ReconFailedThreshold">Failed requests that mark a scan</label>
+                                <input id="ReconFailedThreshold" type="number" is="emby-input" min="5" max="500" />
+                                <div class="fieldDescription">4xx replies inside the window. Default 30.</div>
+                            </div>
+                            <div class="inputContainer">
+                                <label class="inputLabel" for="ReconUnauthThreshold">Unauthenticated requests that mark a scan</label>
+                                <input id="ReconUnauthThreshold" type="number" is="emby-input" min="20" max="2000" />
+                                <div class="fieldDescription">Only counts together with the breadth below. Default 120.</div>
+                            </div>
+                            <div class="inputContainer">
+                                <label class="inputLabel" for="ReconDistinctPathMin">Distinct paths for the breadth rule</label>
+                                <input id="ReconDistinctPathMin" type="number" is="emby-input" min="3" max="48" />
+                                <div class="fieldDescription">So a client retrying one endpoint cannot trip the volume rule. Default 15.</div>
+                            </div>
+                            <div class="inputContainer">
+                                <label class="inputLabel" for="ReconWindowMinutes">Window minutes</label>
+                                <input id="ReconWindowMinutes" type="number" is="emby-input" min="1" max="60" />
+                                <div class="fieldDescription">Default 5.</div>
+                            </div>
+                            <div class="inputContainer">
+                                <label class="inputLabel" for="ReconCooldownMinutes">Slow-down minutes</label>
+                                <input id="ReconCooldownMinutes" type="number" is="emby-input" min="1" max="1440" />
+                                <div class="fieldDescription">How long 429 replies last after a scan crosses. Default 10.</div>
+                            </div>
+                        </article>
+                    </div>
+
+                    <div id="panel-addresses" class="js-panel" role="tabpanel" aria-labelledby="tab-addresses" aria-hidden="true">
+                        <p class="js-tab-hint">Manual and automatic address blocking, proxy trust settings, and network exceptions.</p>
+                        <article class="js-goal">
+                            <h2>Block an address</h2>
+                            <p class="fieldDescription">Stop sign-in from an address or range you name. Whole-internet ranges are refused. Admin and monitoring networks are not blocked.</p>
+                            <div class="checkboxContainer">
+                                <label class="emby-checkbox-label">
+                                    <input id="ApplyManualBans" type="checkbox" is="emby-checkbox" />
+                                    <span>Enforce the addresses I block</span>
+                                </label>
+                            </div>
+                            <div class="inputContainer">
+                                <label class="inputLabel" for="ManualTarget">Address or range</label>
+                                <input id="ManualTarget" type="text" is="emby-input" placeholder="e.g. 203.0.113.5 or 10.0.0.0/24" />
+                                <div class="fieldDescription">A single IPv4/IPv6 address, or a CIDR range. Whole-internet ranges (0.0.0.0/0) are refused.</div>
+                            </div>
+                            <div class="inputContainer">
+                                <label class="inputLabel" for="ManualReason">Why</label>
+                                <input id="ManualReason" type="text" is="emby-input" />
+                            </div>
+                            <div class="inputContainer">
+                                <label class="inputLabel" for="ManualMinutes">Minutes (leave empty to keep it)</label>
+                                <input id="ManualMinutes" type="number" is="emby-input" min="1" />
+                            </div>
+                            <button is="emby-button" type="button" id="AddBanButton" class="raised emby-button">Block this address</button>
+                            <p class="fieldDescription" id="BanError"></p>
+                            <div id="BanList">No address is blocked.</div>
+                        </article>
+
+                        <article class="js-goal">
+                            <h2>Block sign-in from countries I name</h2>
+                            <p class="fieldDescription">Each row holds the address ranges for one country — plain CIDR or address text, separated by commas or new lines, and free to edit by hand. A row that is on rejects sign-in whose address matches it, the same way a manual block does. Admin and monitoring networks are never blocked. Nothing happens until a row is on, "Enforce the addresses I block" is on, and the changes are saved.</p>
+                            <div id="GeoBlockRows"></div>
+                            <button is="emby-button" type="button" id="GeoBlockAdd" class="raised emby-button">Add a country</button>
+                            <p class="fieldDescription" id="GeoBlockHint">Type a name, then press Fill to read its ranges from the local geo file set in the More tab — or paste a list yourself. Remember to Save.</p>
+                        </article>
+
+                        <article class="js-goal">
+                            <h2>Block an address after repeated failures</h2>
+                            <p class="fieldDescription">Watch only records sign-in and does not block an address for you. Any other mode can pause a verified IPv4 address after the failure count below, once automatic blocks are on. Balanced, Strict, and Custom use that same rule.</p>
+                            <div class="selectContainer">
+                                <label class="selectLabel" for="Mode">What should happen</label>
+                                <select is="emby-select" id="Mode">
+                                    <option value="MonitorOnly">Watch only</option>
+                                    <option value="Balanced">Allow automatic blocks (Balanced)</option>
+                                    <option value="Strict">Allow automatic blocks (Strict)</option>
+                                    <option value="Custom">Allow automatic blocks (Custom)</option>
+                                    <option value="Emergency">Emergency (lifts admin-network restriction)</option>
+                                </select>
+                                <div class="fieldDescription">Emergency lifts the admin-network restriction. The three “allow” choices follow the same rule today.</div>
+                            </div>
+                            <div class="checkboxContainer checkboxContainer-withDescription">
+                                <label class="emby-checkbox-label">
+                                    <input id="AutomaticIpBans" type="checkbox" is="emby-checkbox" />
+                                    <span>Pause a verified address after repeated failures</span>
+                                </label>
+                                <div class="fieldDescription checkboxFieldDescription">Does nothing while the choice above is Watch only. An unverified address is never blocked automatically.</div>
+                            </div>
+                            <div data-gate="AutomaticIpBans">
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="FailuresBeforeBan">Failures before the pause</label>
+                                    <input id="FailuresBeforeBan" type="number" is="emby-input" min="1" />
+                                </div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="FailureWindowMinutes">Count them over this many minutes</label>
+                                    <input id="FailureWindowMinutes" type="number" is="emby-input" min="1" />
+                                </div>
+                                <div class="checkboxContainer checkboxContainer-withDescription">
+                                    <label class="emby-checkbox-label">
+                                        <input id="AutomaticIpv6PrefixBan" type="checkbox" is="emby-checkbox" />
+                                        <span>Ban the /64 prefix for IPv6 addresses</span>
+                                    </label>
+                                    <div class="fieldDescription checkboxFieldDescription">IPv6 clients can rotate their address inside their subnet. When this is off, IPv6 addresses are never banned automatically (fail-safe). When on, the whole /64 prefix — the typical end-user allocation — is paused instead. This is broader than a single-address ban, so it stays off until you choose it.</div>
+                                </div>
+                            </div>
+                            <div class="checkboxContainer checkboxContainer-withDescription">
+                                <label class="emby-checkbox-label">
+                                    <input id="ProtectQuickConnect" type="checkbox" is="emby-checkbox" />
+                                    <span>Also apply sign-in blocks to Quick Connect</span>
+                                </label>
+                                <div class="fieldDescription checkboxFieldDescription">Quick Connect sign-ins follow the same block rules as password sign-ins.</div>
+                            </div>
+                            <details>
+                                <summary>Jellyfin is behind a proxy, or some networks should be left alone</summary>
+                                <div class="checkboxContainer checkboxContainer-withDescription">
+                                    <label class="emby-checkbox-label">
+                                        <input id="TrustForwardedFor" type="checkbox" is="emby-checkbox" />
+                                        <span>Use X-Forwarded-For from a proxy I name</span>
+                                    </label>
+                                    <div class="fieldDescription checkboxFieldDescription">Automatic blocks stay off until at least one proxy is named.</div>
+                                </div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="KnownProxies">Proxy addresses</label>
+                                    <input id="KnownProxies" type="text" is="emby-input" />
+                                </div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="TrustedNetworks">Trusted networks — manual blocks apply, automatic blocks do not</label>
+                                    <input id="TrustedNetworks" type="text" is="emby-input" />
+                                </div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="AdminNetworks">Admin networks — neither manual nor automatic blocks</label>
+                                    <input id="AdminNetworks" type="text" is="emby-input" />
+                                </div>
+                                <div class="checkboxContainer checkboxContainer-withDescription">
+                                    <label class="emby-checkbox-label">
+                                        <input id="RestrictAdminNetworks" type="checkbox" is="emby-checkbox" />
+                                        <span>Keep known admin changes inside admin networks</span>
+                                    </label>
+                                    <div class="fieldDescription checkboxFieldDescription">A mapped set of user and system write routes. Other admin APIs may remain reachable. Ignored when admin networks are empty.</div>
+                                </div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="MonitoringNetworks">Monitoring networks — record only</label>
+                                    <input id="MonitoringNetworks" type="text" is="emby-input" />
+                                </div>
+                            </details>
+                        </article>
+                    </div>
+
+                    <div id="panel-sessions" class="js-panel" role="tabpanel" aria-labelledby="tab-sessions" aria-hidden="true">
+                        <p class="js-tab-hint">Alerts on unfamiliar sign-in activity and session management. Playback is never stopped automatically.</p>
+                        <article class="js-goal">
+                            <div class="checkboxContainer checkboxContainer-withDescription">
+                                <label class="emby-checkbox-label">
+                                    <input id="SessionWatchEnabled" type="checkbox" is="emby-checkbox" />
+                                    <span>Notice a sign-in that does not look like this account</span>
+                                </label>
+                                <div class="fieldDescription checkboxFieldDescription">A success from a new address, or too many sessions at once, is listed here. The first address is remembered quietly. Playback stays up until you sign out the other devices.</div>
+                            </div>
+                            <div data-gate="SessionWatchEnabled">
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="SessionWatchConcurrent">Warn at this many sessions at once</label>
+                                    <input id="SessionWatchConcurrent" type="number" is="emby-input" min="2" max="50" />
+                                </div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="SessionWatchCooldownMinutes">Wait this many minutes before warning again</label>
+                                    <input id="SessionWatchCooldownMinutes" type="number" is="emby-input" min="1" max="1440" />
+                                </div>
+                                <div class="checkboxContainer">
+                                    <label class="emby-checkbox-label">
+                                        <input id="SessionWatchRequireVerifiedAddress" type="checkbox" is="emby-checkbox" />
+                                        <span>Ignore an address that is not trusted</span>
+                                    </label>
+                                </div>
+                                <div class="checkboxContainer">
+                                    <label class="emby-checkbox-label">
+                                        <input id="SessionWatchSkipPrivilegedNetworks" type="checkbox" is="emby-checkbox" />
+                                        <span>Do not warn for loopback, trusted, admin, or monitoring networks</span>
+                                    </label>
+                                </div>
+                                <p class="fieldDescription" id="SessionSummary">Unfamiliar sessions appear here.</p>
+                                <div id="SessionList">No unfamiliar session.</div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="SessionCloseName">Sign out other devices for this name</label>
+                                    <input id="SessionCloseName" type="text" is="emby-input" />
+                                </div>
+                                <button is="emby-button" type="button" id="CloseSessionsButton" class="raised emby-button">Sign out devices that are not playing</button>
+                                <p class="fieldDescription" id="SessionCloseResult"></p>
+                            </div>
+                        </article>
+
+                        <article class="js-goal">
+                            <div class="checkboxContainer checkboxContainer-withDescription">
+                                <label class="emby-checkbox-label">
+                                    <input id="ObserveSessions" type="checkbox" is="emby-checkbox" />
+                                    <span>Record session administration, not playback</span>
+                                </label>
+                                <div class="fieldDescription checkboxFieldDescription">When on, the plugin records session list reads and sign-out actions in its audit log. Playback, progress, and play commands are never recorded. This does not sign anyone out by itself.</div>
+                            </div>
+                        </article>
+                    </div>
+
+                    <div id="panel-edge" class="js-panel" role="tabpanel" aria-labelledby="tab-edge" aria-hidden="true">
+                        <p class="js-tab-hint">Generate rate-limiting rules for your reverse proxy (Nginx, Caddy, or Cloudflare). This is an addition to your existing setup, not a replacement — your domain, certificates, and playback config stay untouched.</p>
+                        <article class="js-goal">
+                            <h2>What this tab does</h2>
+                            <p class="fieldDescription">This tab builds text you can paste into your reverse proxy (Nginx, Caddy, or Cloudflare) so that sign-in guessing is slowed or blocked <strong>before</strong> it reaches Jellyfin. The plugin does not edit those systems — it only produces the text. You paste it yourself and reload the proxy.</p>
+                            <p class="fieldDescription"><strong>This is additive.</strong> The snippet only adds rate-limiting to sign-in routes. It does not touch your domain, SSL certificates, playback proxy_pass, or any other existing configuration. Back up your proxy config before pasting, so you can restore if something goes wrong.</p>
+                            <p class="fieldDescription">Two features live here:</p>
+                            <ol class="fieldDescription" style="padding-left:1.4rem">
+                                <li><strong>Snippet</strong> — a ready-to-paste rate-limit rule. Turn it on, pick your proxy, set how many sign-in attempts per minute per address, save, then copy and paste into your existing config.</li>
+                                <li><strong>Block-list channel</strong> — an endpoint your proxy can read to stay in sync with the addresses this plugin has blocked. The proxy authenticates with a shared key.</li>
+                            </ol>
+                            <p class="fieldDescription" id="EdgeEmptyHint">Both features are off right now. Turn one on below to see its fields.</p>
+                        </article>
+
+                        <article class="js-goal">
+                            <div class="checkboxContainer checkboxContainer-withDescription">
+                                <label class="emby-checkbox-label">
+                                    <input id="EdgeSnippetEnabled" type="checkbox" is="emby-checkbox" />
+                                    <span>Build a rate-limit snippet for my proxy</span>
+                                </label>
+                                <div class="fieldDescription checkboxFieldDescription">Produces text you paste into Nginx, Caddy, or Cloudflare so sign-in guessing is slowed before it reaches Jellyfin. Playback paths are not included. This plugin does not edit those systems — it only gives you the text to paste.</div>
+                            </div>
+                            <div data-gate="EdgeSnippetEnabled">
+                                <div class="selectContainer">
+                                    <label class="selectLabel" for="EdgeSnippetTarget">Where you will paste it</label>
+                                    <select id="EdgeSnippetTarget" is="emby-select">
+                                        <option value="Nginx">Nginx</option>
+                                        <option value="Caddy">Caddy</option>
+                                        <option value="Cloudflare">Cloudflare</option>
+                                    </select>
+                                </div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="EdgeSnippetUpstream">Jellyfin host and port the proxy reaches</label>
+                                    <input id="EdgeSnippetUpstream" type="text" is="emby-input" />
+                                    <div class="fieldDescription">Example: 127.0.0.1:8096. Cloudflare’s rule does not use this.</div>
+                                </div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="EdgeSnippetAuthPerMinute">Sign-in requests per address each minute</label>
+                                    <input id="EdgeSnippetAuthPerMinute" type="number" is="emby-input" min="1" max="600" />
+                                </div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="EdgeSnippetBurst">Extra Nginx burst</label>
+                                    <input id="EdgeSnippetBurst" type="number" is="emby-input" min="0" max="100" />
+                                    <div class="fieldDescription">Nginx only. 0 means no burst.</div>
+                                </div>
+                                <div class="checkboxContainer">
+                                    <label class="emby-checkbox-label">
+                                        <input id="EdgeSnippetIncludeBlocklist" type="checkbox" is="emby-checkbox" />
+                                        <span>Include the current block list in the text</span>
+                                    </label>
+                                </div>
+                                <p class="fieldDescription" id="EdgeSnippetNote"></p>
+                                <div class="fieldDescription">The text below reflects your <strong>saved</strong> settings. Change the fields, press Save, then press Refresh to see the new text.</div>
+                                <pre id="EdgeSnippet">No snippet yet.</pre>
+                                <button is="emby-button" type="button" id="RefreshEdgeSnippet" class="raised emby-button">Refresh</button>
+                                <button is="emby-button" type="button" id="CopyEdgeSnippet" class="raised emby-button">Copy</button>
+                            </div>
+                        </article>
+
+                        <article class="js-goal">
+                            <div class="checkboxContainer checkboxContainer-withDescription">
+                                <label class="emby-checkbox-label">
+                                    <input id="EdgeChannelEnabled" type="checkbox" is="emby-checkbox" />
+                                    <span>Let the proxy read the block list with a shared key</span>
+                                </label>
+                                <div class="fieldDescription checkboxFieldDescription">When on, the plugin exposes a limited block-list endpoint at /JellySecurity/edge/. The proxy authenticates with the shared key below. Jellyfin may still apply its own authentication to that path.</div>
+                            </div>
+                            <div data-gate="EdgeChannelEnabled">
+                                <div class="checkboxContainer checkboxContainer-withDescription">
+                                    <label class="emby-checkbox-label">
+                                        <input id="EdgeRestrictToTrustedPeers" type="checkbox" is="emby-checkbox" />
+                                        <span>Only from loopback or a named proxy</span>
+                                    </label>
+                                    <div class="fieldDescription checkboxFieldDescription">When on, the edge endpoint accepts requests only from 127.0.0.1, ::1, or an address listed in Known Proxies (Addresses tab). When off, any address with the correct key can read the block list.</div>
+                                </div>
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="EdgeSharedKey">Shared key</label>
+                                    <input id="EdgeSharedKey" type="password" is="emby-input" autocomplete="new-password" />
+                                    <div class="fieldDescription">At least 16 letters, digits, underscores, or hyphens. Leave blank to keep the saved key.</div>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+
+                    <div id="panel-more" class="js-panel" role="tabpanel" aria-labelledby="tab-more" aria-hidden="true">
+                        <p class="js-tab-hint">Alerts (webhook + cooldown), local geo lookup, and backup/restore of plugin settings.</p>
+                        <article class="js-goal">
+                            <h2>Alerts</h2>
+                            <p class="fieldDescription">When the plugin detects a pattern (brute force, spray, enumeration, honeypot hit), it records an incident. The options below control how often it records the same incident and whether it also sends it to a webhook.</p>
+                            <div class="inputContainer">
+                                <label class="inputLabel" for="AlertCooldownMinutes">Minutes before a similar alert is recorded again</label>
+                                <input id="AlertCooldownMinutes" type="number" is="emby-input" min="1" />
+                                <div class="fieldDescription">When the same detector fires for the same target, the plugin waits this many minutes before recording another incident. This prevents alert flooding.</div>
+                            </div>
+                            <div class="checkboxContainer checkboxContainer-withDescription">
+                                <label class="emby-checkbox-label">
+                                    <input id="WebhookEnabled" type="checkbox" is="emby-checkbox" />
+                                    <span>Send an alert to a webhook</span>
+                                </label>
+                                <div class="fieldDescription checkboxFieldDescription">When an incident is recorded, the plugin sends a JSON payload to this URL. The webhook is optional and a failed delivery never blocks sign-in. The URL is validated against SSRF (loopback, private, and link-local addresses are rejected).</div>
+                            </div>
+                            <div data-gate="WebhookEnabled">
+                                <div class="inputContainer">
+                                    <label class="inputLabel" for="WebhookUrl">Webhook URL (http or https, public address only)</label>
+                                    <input id="WebhookUrl" type="text" is="emby-input" placeholder="https://example.com/hook" />
+                                    <div class="fieldDescription">HTTPS is preferred. HTTP is allowed for local setups. Private, loopback, and link-local addresses are rejected. Hostnames are DNS-resolved and must resolve to public IPs.</div>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="js-goal">
+                            <h2>Local lookup</h2>
+                            <div class="inputContainer">
+                                <label class="inputLabel" for="LocalGeoFile">Local geo file (CSV)</label>
+                                <input id="LocalGeoFile" type="text" is="emby-input" />
+                                <div class="fieldDescription">Country data stays on disk and does not raise a block by itself.</div>
+                            </div>
+                        </article>
+
+                        <article class="js-goal">
+                            <h2>Backup and restore</h2>
+                            <p class="fieldDescription">Back up your plugin settings and bans to a JSON file. Secrets (webhook URL, honeypot name, captcha secret, edge key) are replaced with "(redacted)" in the file so it is safe to keep or share. Restoring a backup replaces your current settings and bans, but keeps the secrets that are already on the server.</p>
+                            <h3>Download a backup</h3>
+                            <button is="emby-button" type="button" id="ExportBackup" class="raised emby-button">Download backup (secrets redacted)</button>
+                            <h3 style="margin-top:1rem">Restore from a backup</h3>
+                            <div class="fieldDescription">Paste a backup JSON below. Click <strong>Preview</strong> first to see what would change. Then click <strong>Apply</strong> to replace your current settings.</div>
+                            <textarea id="BackupJson" rows="6" style="width:100%;margin-top:1em;" placeholder='Paste a backup JSON here, then click Preview. Example: {"schemaVersion":5,"configuration":{...},"bans":[...]}'></textarea>
+                            <div style="margin-top:.5rem;">
+                                <button is="emby-button" type="button" id="PreviewBackup" class="raised emby-button">Preview</button>
+                                <button is="emby-button" type="button" id="RestoreBackup" class="raised emby-button">Apply</button>
+                            </div>
+                            <pre id="BackupResult" class="fieldDescription" style="white-space:pre-wrap;margin-top:.6rem;padding:.5rem;border:1px solid color-mix(in srgb, currentColor 12%, transparent);border-radius:6px;max-height:18rem;overflow:auto;"></pre>
+                        </article>
+                    </div>
+
+                    <div class="js-save-bar">
+                        <button is="emby-button" type="submit" class="raised button-submit block emby-button">
+                            <span>Save</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script>
+            var JellySecurity = { id: '8b4e2c1a-6d3f-4a19-9e2b-7c5f1d8a0b34' };
+
+            function fieldValue(id) {
+                var el = document.querySelector('#' + id);
+                return el ? String(el.value || '').trim() : '';
+            }
+
+            function fieldOn(id) {
+                var el = document.querySelector('#' + id);
+                return !!(el && el.checked);
+            }
+
+            function fieldInt(id, fallback) {
+                var el = document.querySelector('#' + id);
+                if (!el) { return fallback; }
+                var parsed = parseInt(el.value, 10);
+                return isNaN(parsed) ? fallback : parsed;
+            }
+
+            function formatTime(value) {
+                if (!value) { return '—'; }
+                var time = Date.parse(value);
+                if (isNaN(time)) { return value; }
+                return new Date(time).toLocaleString();
+            }
+
+            function meterClass(detail, cls) {
+                var el = document.querySelector('#DashboardMeters [data-detail="' + detail + '"]');
+                if (!el) { return; }
+                el.classList.remove('is-alert', 'is-warn', 'is-ok');
+                el.classList.add(cls);
+            }
+
+            function renderInfoRows(containerId, rows, emptyText) {
+                var box = document.querySelector('#' + containerId);
+                if (!box) { return; }
+                box.textContent = '';
+                if (!rows.length) {
+                    box.textContent = emptyText;
+                    return;
+                }
+                rows.forEach(function (row) {
+                    var div = document.createElement('div');
+                    div.className = 'js-info-row';
+                    row.forEach(function (pair) {
+                        var label = document.createElement('span');
+                        label.className = 'js-info-label';
+                        label.textContent = pair[0] + ':';
+                        var val = document.createElement('span');
+                        val.className = 'js-info-val';
+                        val.textContent = pair[1];
+                        div.appendChild(label);
+                        div.appendChild(val);
+                    });
+                    box.appendChild(div);
+                });
+            }
+
+            function fitGroup(title, lines) {
+                var group = document.createElement('div');
+                var label = document.createElement('p');
+                label.className = 'js-fit-label';
+                label.textContent = title;
+                var list = document.createElement('ul');
+                lines.forEach(function (text) {
+                    var item = document.createElement('li');
+                    item.textContent = text;
+                    list.appendChild(item);
+                });
+                group.appendChild(label);
+                group.appendChild(list);
+                return group;
+            }
+
+            function renderSettingsFit() {
+                var box = document.querySelector('#PostureList');
+                if (!box || !document.querySelector('#Mode')) { return; }
+                var mode = fieldValue('Mode') || 'MonitorOnly';
+                var automatic = fieldOn('AutomaticIpBans');
+                var waitingOnProxy = fieldOn('TrustForwardedFor') && !fieldValue('KnownProxies');
+                var on = [];
+                var does = [];
+                var leaves = [
+                    'Playback is not stopped.',
+                    'Jellyfin\'s lockout counter is not changed.',
+                    'Sessions are not closed unless you use the button on Sessions.'
+                ];
+
+                if (mode === 'MonitorOnly') {
+                    on.push('Watch only');
+                    does.push('Sign-in is recorded. Repeated failures do not block an address.');
+                } else if (!automatic) {
+                    on.push('Automatic blocks are allowed');
+                    does.push('The pause after repeated failures is off.');
+                } else if (waitingOnProxy) {
+                    on.push('Automatic blocks are waiting for a named proxy');
+                    does.push('Nothing is blocked automatically until that proxy is named.');
+                } else {
+                    on.push('Pause a verified address after repeated failures');
+                    does.push('A verified address can be paused after repeated failures.');
+                }
+
+                if (fieldOn('ApplyManualBans')) {
+                    on.push('Addresses you block are enforced');
+                }
+                if (fieldOn('PasswordDelayEnabled')) {
+                    on.push('Wrong passwords wait before the next try. Playback is not delayed.');
+                }
+                if (fieldOn('AccountCooldownEnabled')) {
+                    on.push('A sprayed name can pause, then return. The account stays enabled.');
+                }
+                if (fieldOn('LockoutWatchEnabled')) {
+                    on.push('Accounts close to their own Jellyfin limit are listed.');
+                }
+                if (fieldOn('SessionWatchEnabled')) {
+                    on.push('A new address or too many sessions is noted.');
+                }
+                if (fieldOn('HoneypotInstantBan')) {
+                    on.push('A decoy name that matches nobody can block that verified IPv4 address.');
+                }
+                if (fieldOn('CaptchaEnforceWeb')) {
+                    var provider = fieldValue('CaptchaProvider');
+                    if (!provider || provider === 'None' || !fieldValue('CaptchaSiteKey')) {
+                        on.push('Browser check is on, but a provider and site key are still needed.');
+                    } else {
+                        on.push('Browser sign-in can show one check. TV apps and unknown clients are not asked.');
+                    }
+                }
+                if (fieldOn('ProtectQuickConnect')) {
+                    on.push('Sign-in blocks also apply to Quick Connect.');
+                } else {
+                    leaves.push('Quick Connect is not blocked.');
+                }
+                if (fieldOn('EdgeSnippetEnabled')) {
+                    on.push('A proxy snippet is shown to paste. Proxy files are not written.');
+                }
+                if (fieldOn('EdgeChannelEnabled')) {
+                    on.push('A shared-key caller can read a limited block list.');
+                }
+                if (fieldOn('RestrictAdminNetworks')) {
+                    on.push(fieldValue('AdminNetworks')
+                        ? 'Admin network restriction is on for the routes this plugin checks.'
+                        : 'Admin network restriction is on, but no networks are set, so it is ignored.');
+                }
+                if (fieldOn('WebhookEnabled')) {
+                    var hook = fieldValue('WebhookUrl').toLowerCase();
+                    on.push(hook.indexOf('http://') === 0
+                        ? 'Alerts can go to the webhook. The address uses HTTP.'
+                        : 'Alerts can go to the webhook you set.');
+                }
+                if (fieldValue('LocalGeoFile')) {
+                    on.push('Country lookup stays on disk and does not block by itself.');
+                }
+                var detectors = ['EnableBruteForceDetector', 'EnableDistributedDetector', 'EnablePasswordSprayDetector', 'EnableEnumerationDetector', 'EnableHoneypotDetector', 'EnableAdminTargetDetector'];
+                if (detectors.some(fieldOn)) {
+                    on.push('Pattern checks record a signal and do not block by themselves.');
+                }
+
+                box.textContent = '';
+                box.appendChild(fitGroup('On', on));
+                box.appendChild(fitGroup('Does', does));
+                box.appendChild(fitGroup('Does not', leaves));
+            }
+
+            function refreshGoals() {
+                document.querySelectorAll('[data-gate]').forEach(function (el) {
+                    var input = document.querySelector('#' + el.getAttribute('data-gate'));
+                    el.classList.toggle('is-on', !!(input && input.checked));
+                });
+                var edgeHint = document.querySelector('#EdgeEmptyHint');
+                if (edgeHint) {
+                    var anyEdge = fieldOn('EdgeSnippetEnabled') || fieldOn('EdgeChannelEnabled');
+                    edgeHint.style.display = anyEdge ? 'none' : 'block';
+                }
+                renderSettingsFit();
+                updateLiveStates();
+            }
+
+            // Updates HoneypotState and CaptchaState from the current form
+            // values, not just from the API. This gives the admin immediate
+            // feedback while typing, before they save.
+            function updateLiveStates() {
+                var honeypotEl = document.querySelector('#HoneypotState');
+                if (honeypotEl) {
+                    var honeypotOn = fieldOn('HoneypotInstantBan');
+                    var honeypotName = fieldValue('HoneypotUsername');
+                    if (!honeypotOn) {
+                        honeypotEl.textContent = honeypotName
+                            ? 'The detector will record uses of "' + honeypotName + '". The instant ban is off.'
+                            : 'A decoy name does not block anyone yet.';
+                    } else if (!honeypotName) {
+                        honeypotEl.textContent = 'Instant ban is on, but no decoy name is set.';
+                    } else {
+                        honeypotEl.textContent = 'One use of "' + honeypotName + '" from a verified IPv4 address will be blocked. Save to confirm the name does not match a Jellyfin user.';
+                    }
+                }
+                var captchaEl = document.querySelector('#CaptchaState');
+                if (captchaEl) {
+                    var captchaOn = fieldOn('CaptchaEnforceWeb');
+                    if (!captchaOn) {
+                        captchaEl.textContent = '';
+                    } else {
+                        var provider = fieldValue('CaptchaProvider');
+                        var siteKey = fieldValue('CaptchaSiteKey');
+                        if (provider === 'None' || !siteKey || siteKey.length < 20) {
+                            captchaEl.textContent = 'Browser challenge is on, but a provider and a valid site key are still needed. Sign-in is not blocked yet.';
+                        } else {
+                            captchaEl.textContent = provider === 'Turnstile'
+                                ? 'Cloudflare Turnstile is ready. Browser sign-in will show a challenge.'
+                                : 'Google reCAPTCHA is ready. Browser sign-in will show a challenge.';
+                        }
+                    }
+                }
+            }
+
+            function say(value, words) {
+                return words[value] || value || '—';
+            }
+
+            function setBanner(s) {
+                var el = document.querySelector('#modeBanner');
+                el.classList.remove('is-ok', 'is-warn', 'is-alert');
+                var blocked = s.blockedLast24Hours || 0;
+                var bans = s.activeBans || 0;
+                var cooldowns = (s.accountCooldowns || []).length;
+                var incidents = s.incidentsLast24Hours || 0;
+                var state = s.engineState;
+                var automatic = s.automaticIpBans;
+                if (state === 'Degraded') {
+                    el.classList.add('is-warn');
+                    el.textContent = 'Automatic blocks are waiting. The visitor address is not trusted yet, so nothing is blocked for you.';
+                    return;
+                }
+                if (!automatic && state === 'MonitorOnly') {
+                    if (blocked === 0 && bans === 0 && cooldowns === 0 && incidents === 0) {
+                        el.classList.add('is-ok');
+                        el.textContent = 'Watching sign-in. No threats detected in the last 24h. Your server is quiet.';
+                    } else {
+                        el.classList.add('is-ok');
+                        var parts = [];
+                        if (blocked > 0) { parts.push(blocked + ' sign-in attempt' + (blocked === 1 ? '' : 's') + ' stopped'); }
+                        if (bans > 0) { parts.push(bans + ' address' + (bans === 1 ? '' : 'es') + ' blocked'); }
+                        if (cooldowns > 0) { parts.push(cooldowns + ' name' + (cooldowns === 1 ? '' : 's') + ' paused'); }
+                        el.textContent = 'Watching only. Last 24h: ' + parts.join(', ') + '. Turn on automatic blocks to enforce them.';
+                    }
+                    return;
+                }
+                // Enforcement active
+                if (blocked === 0 && bans === 0 && cooldowns === 0 && incidents === 0) {
+                    el.classList.add('is-ok');
+                    el.textContent = 'Protecting sign-in. No threats detected in the last 24h. Your server is quiet.';
+                } else {
+                    el.classList.add(bans > 0 || cooldowns > 0 ? 'is-warn' : 'is-ok');
+                    var bits = [];
+                    if (blocked > 0) { bits.push(blocked + ' sign-in attempt' + (blocked === 1 ? '' : 's') + ' stopped'); }
+                    if (bans > 0) { bits.push(bans + ' address' + (bans === 1 ? '' : 'es') + ' blocked'); }
+                    if (cooldowns > 0) { bits.push(cooldowns + ' name' + (cooldowns === 1 ? '' : 's') + ' paused'); }
+                    var tail = (bans > 0 || cooldowns > 0) ? ' Review the Active enforcement section below to lift any of them.' : '';
+                    el.textContent = 'Your server is protected. Last 24h: ' + bits.join(', ') + '.' + tail;
+                }
+            }
+
+            function paintActiveEnforcement(s, bans) {
+                var box = document.querySelector('#ActiveEnforcementTable');
+                var section = document.querySelector('#ActiveEnforcement');
+                if (!box || !section) { return; }
+                box.textContent = '';
+                var rows = [];
+                (bans || []).forEach(function (b) {
+                    if (!b.active) { return; }
+                    rows.push({
+                        kind: 'ban',
+                        kindLabel: 'Blocked address',
+                        target: b.target,
+                        detail: [b.kind, b.createdBy || ''].filter(Boolean).join(' · '),
+                        timeLeft: b.expiresUtc ? 'until ' + formatTime(b.expiresUtc) : 'no expiry',
+                        reason: b.reason || '',
+                        lift: { action: 'ban', target: b.target }
+                    });
+                });
+                (s.accountCooldowns || []).forEach(function (c) {
+                    rows.push({
+                        kind: 'pause',
+                        kindLabel: 'Paused name',
+                        target: c.username,
+                        detail: c.distinctIps + ' address' + (c.distinctIps === 1 ? '' : 'es') + ' tried this name',
+                        timeLeft: c.remainingSeconds > 60 ? Math.round(c.remainingSeconds / 60) + ' min left' : c.remainingSeconds + 's left',
+                        reason: '',
+                        lift: { action: 'cooldown', target: c.username }
+                    });
+                });
+                (s.reconLimited || []).forEach(function (r) {
+                    rows.push({
+                        kind: 'scan',
+                        kindLabel: 'Slowed address',
+                        target: r.address,
+                        detail: '429 on API enumeration endpoints',
+                        timeLeft: r.remainingSeconds > 60 ? Math.round(r.remainingSeconds / 60) + ' min left' : r.remainingSeconds + 's left',
+                        reason: '',
+                        lift: { action: 'recon', target: r.address }
+                    });
+                });
+                if (!rows.length) {
+                    section.classList.add('is-empty');
+                    box.textContent = 'Nothing is being enforced right now. No address is blocked and no name is paused.';
+                    return;
+                }
+                section.classList.remove('is-empty');
+                rows.forEach(function (r) {
+                    var row = document.createElement('div');
+                    row.className = 'js-active-row';
+                    var tag = document.createElement('span');
+                    tag.className = 'js-active-kind k-' + r.kind;
+                    tag.textContent = r.kindLabel;
+                    row.appendChild(tag);
+                    var info = document.createElement('div');
+                    info.className = 'js-active-info';
+                    var strong = document.createElement('strong');
+                    strong.textContent = r.target;
+                    info.appendChild(strong);
+                    var detail = document.createElement('span');
+                    detail.style.marginLeft = '.4rem';
+                    detail.style.opacity = '.8';
+                    detail.style.fontSize = '.88rem';
+                    var parts = [r.detail, r.timeLeft];
+                    if (r.reason) { parts.push(r.reason); }
+                    detail.textContent = ' — ' + parts.filter(Boolean).join(' · ');
+                    info.appendChild(detail);
+                    row.appendChild(info);
+                    var btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'js-active-lift';
+                    btn.textContent = r.lift.action === 'ban' ? 'Lift block' : (r.lift.action === 'recon' ? 'End slow-down' : 'End pause');
+                    btn.setAttribute('data-lift-action', r.lift.action);
+                    btn.setAttribute('data-lift-target', r.lift.target);
+                    btn.addEventListener('click', function () {
+                        var action = this.getAttribute('data-lift-action');
+                        var target = this.getAttribute('data-lift-target');
+                        var msg = action === 'ban'
+                            ? 'Remove the block for "' + target + '"?'
+                            : action === 'recon'
+                                ? 'End the API scan slow-down for "' + target + '"?'
+                                : 'End the pause for "' + target + '"?';
+                        if (!confirm(msg)) { return; }
+                        if (action === 'ban') {
+                            ApiClient.ajax({
+                                type: 'DELETE',
+                                url: ApiClient.getUrl('JellySecurity/bans') + '?target=' + encodeURIComponent(target)
+                            }).then(function () { loadStatus(); }).catch(function () { });
+                        } else if (action === 'recon') {
+                            ApiClient.ajax({
+                                type: 'POST',
+                                url: ApiClient.getUrl('JellySecurity/recon/clear'),
+                                data: JSON.stringify({ Address: target }),
+                                contentType: 'application/json'
+                            }).then(function () { loadStatus(); }).catch(function () { });
+                        } else {
+                            ApiClient.ajax({
+                                type: 'POST',
+                                url: ApiClient.getUrl('JellySecurity/cooldowns/clear'),
+                                data: JSON.stringify({ Username: target }),
+                                contentType: 'application/json'
+                            }).then(function () { loadStatus(); }).catch(function () { });
+                        }
+                    });
+                    row.appendChild(btn);
+                    box.appendChild(row);
+                });
+            }
+
+            // Tabs only hide panels. Every control stays in the form, so Save still writes hidden tabs.
+            function selectSecurityTab(tab) {
+                var tabs = document.querySelectorAll('#JellySecurityTabs [role="tab"]');
+                Array.prototype.forEach.call(tabs, function (item) {
+                    var on = item === tab;
+                    item.classList.toggle('is-active', on);
+                    item.setAttribute('aria-selected', on ? 'true' : 'false');
+                    item.tabIndex = on ? 0 : -1;
+                    var panel = document.getElementById(item.getAttribute('aria-controls'));
+                    if (panel) {
+                        panel.classList.toggle('is-active', on);
+                        panel.setAttribute('aria-hidden', on ? 'false' : 'true');
+                    }
+                });
+            }
+
+            function tabFromTarget(node) {
+                while (node && node.getAttribute) {
+                    if (node.getAttribute('role') === 'tab') {
+                        return node;
+                    }
+                    node = node.parentNode;
+                }
+                return null;
+            }
+
+            function loadStatus() {
+                ApiClient.ajax({ type: 'GET', url: ApiClient.getUrl('JellySecurity/status'), dataType: 'json' }).then(function (s) {
+                    document.querySelector('#statEvents').textContent = s.eventsLast24Hours;
+                    document.querySelector('#statFailed').textContent = s.failedLast24Hours;
+                    document.querySelector('#statBlocked').textContent = s.blockedLast24Hours;
+                    document.querySelector('#statBans').textContent = s.activeBans;
+                    document.querySelector('#statIncidents').textContent = s.incidentsLast24Hours;
+                    document.querySelector('#statDelays').textContent = (s.passwordDelays || []).length;
+                    document.querySelector('#statCooldowns').textContent = (s.accountCooldowns || []).length;
+                    // Color-code meters: alert for threats, warn for activity, ok for quiet.
+                    meterClass('attempts', s.eventsLast24Hours > 50 ? 'is-alert' : s.eventsLast24Hours > 10 ? 'is-warn' : 'is-ok');
+                    meterClass('failed', s.failedLast24Hours > 20 ? 'is-alert' : s.failedLast24Hours > 5 ? 'is-warn' : 'is-ok');
+                    meterClass('blocked', s.blockedLast24Hours > 0 ? 'is-warn' : 'is-ok');
+                    meterClass('bans', s.activeBans > 0 ? 'is-warn' : 'is-ok');
+                    meterClass('incidents', s.incidentsLast24Hours > 0 ? 'is-alert' : 'is-ok');
+                    var watch = s.lockoutWatch || {};
+                    document.querySelector('#statLockout').textContent = s.lockoutWatchEnabled ? (watch.watches || []).length : 'Off';
+                    document.querySelector('#statEdge').textContent = s.edgeSnippetEnabled ? (s.edgeSnippetTarget || 'Nginx') : 'Off';
+                    var sessions = (s.sessionWatch && s.sessionWatch.sessions) || [];
+                    document.querySelector('#statSessions').textContent = s.sessionWatchEnabled ? sessions.length : 'Off';
+                    var delayRows = (s.passwordDelays || []).map(function (row) {
+                        return [['Address', row.address], ['Failures', row.failures], ['Next wait', row.nextDelaySeconds + 's']];
+                    });
+                    renderInfoRows('DelayCounters', delayRows, 'No one is waiting.');
+                    var cooldownRows = (s.accountCooldowns || []).map(function (row) {
+                        return [['Name', row.username], ['Time left', row.remainingSeconds + 's'], ['Addresses', row.distinctIps]];
+                    });
+                    renderInfoRows('CooldownList', cooldownRows, 'No name is paused.');
+                    var lockoutSummary = document.querySelector('#LockoutSummary');
+                    var lockoutList = document.querySelector('#LockoutList');
+                    if (lockoutSummary && lockoutList) {
+                        if (!s.lockoutWatchEnabled) {
+                            lockoutSummary.textContent = 'This notice is off. Jellyfin’s counter was not changed.';
+                            lockoutList.textContent = 'Nothing to list.';
+                        } else if (watch.readFailed) {
+                            lockoutSummary.textContent = 'Jellyfin’s counters could not be read. They were not changed.';
+                            lockoutList.textContent = 'Nothing to list.';
+                        } else {
+                            lockoutSummary.textContent = (watch.accountsRead || 0) + ' accounts read. ' + (watch.accountsWithoutLockout || 0) + ' have no positive lockout limit. Only accounts close to their own limit are listed. The counter was not changed.';
+                            var lockoutRows = (watch.watches || []).map(function (row) {
+                                var label = row.state === 'Reached' ? 'at the limit' : 'close';
+                                return [['Name', row.username], ['Tries', row.attempts + '/' + row.limit], ['Left', row.remaining], ['State', label]];
+                            });
+                            renderInfoRows('LockoutList', lockoutRows, 'No account is close to its limit.');
+                        }
+                    }
+                    var sessionSummary = document.querySelector('#SessionSummary');
+                    var sessionList = document.querySelector('#SessionList');
+                    if (sessionSummary && sessionList) {
+                        if (!s.sessionWatchEnabled) {
+                            sessionSummary.textContent = 'This notice is off. No session is signed out.';
+                            sessionList.textContent = 'Nothing to list.';
+                        } else {
+                            sessionSummary.textContent = ((s.sessionWatch && s.sessionWatch.usersOverLimit) || 0) + ' account(s) over the session count. ' + ((s.sessionWatch && s.sessionWatch.newAddresses) || 0) + ' have an address that was not saved. Playback is not stopped on its own.';
+                            sessionList.textContent = '';
+                            if (!sessions.length) {
+                                sessionList.textContent = 'No unfamiliar session.';
+                            } else {
+                                var table = detailTable(['Name', 'Device', 'Address', 'Playback', 'Title', 'Why'], sessions.map(function (row) {
+                                    return [row.username, row.deviceName || '-', row.address || '-', row.playing ? 'Playing' : 'Not playing', row.title || '-', sessionReasonText(row.reason)];
+                                }));
+                                sessionList.appendChild(table);
+                            }
+                        }
+                    }
+                    var honeypot = document.querySelector('#HoneypotState');
+                    if (honeypot) {
+                        if (!s.honeypotInstantBan) {
+                            honeypot.textContent = 'A decoy name does not block anyone yet.';
+                        } else if (s.honeypotNameCollides) {
+                            honeypot.textContent = 'That name belongs to a Jellyfin user, so the block stays off.';
+                        } else {
+                            honeypot.textContent = 'That name matches nobody. One use from a verified IPv4 address is blocked.';
+                        }
+                    }
+                    var captchaState = document.querySelector('#CaptchaState');
+                    if (captchaState) {
+                        if (!s.captchaEnforceWeb) {
+                            captchaState.textContent = '';
+                        } else {
+                            var provider = s.captchaProvider || 'None';
+                            var hasSiteKey = !!(s.captchaSiteKey && s.captchaSiteKey.length >= 20);
+                            if (provider === 'None' || !hasSiteKey) {
+                                captchaState.textContent = 'Browser challenge is on, but a provider and a valid site key are still needed. Sign-in is not blocked yet.';
+                            } else {
+                                captchaState.textContent = provider === 'Turnstile'
+                                    ? 'Cloudflare Turnstile is ready. Browser sign-in will show a challenge.'
+                                    : 'Google reCAPTCHA is ready. Browser sign-in will show a challenge.';
+                            }
+                        }
+                    }
+                    document.querySelector('#statState').textContent = say(s.engineState, {
+                        MonitorOnly: 'Watching.',
+                        EnforcementActive: 'Automatic blocks are on.',
+                        Degraded: 'Automatic blocks are waiting for a trusted address.'
+                    });
+                    document.querySelector('#statProxy').textContent = say(s.proxyStatus, {
+                        NotRequired: 'Direct connection',
+                        Verified: 'Named proxy',
+                        Unknown: 'Proxy header is on, but no proxy is named'
+                    });
+                    document.querySelector('#healthLine').textContent = (s.warnings || []).join(' ');
+                    document.querySelector('#WarningList').textContent = (s.warnings || []).join('\n') || 'Nothing needs attention.';
+                    setBanner(s);
+                    var lastUpdated = document.querySelector('#lastUpdated');
+                    if (lastUpdated) { lastUpdated.textContent = 'Last updated ' + new Date().toLocaleTimeString(); }
+                    dashboardStatus = s;
+                    refreshOpenDetail();
+                }).catch(function () {
+                    var lastUpdated = document.querySelector('#lastUpdated');
+                    if (lastUpdated) { lastUpdated.textContent = 'Could not reach the plugin. Will retry.'; }
+                });
+                ApiClient.ajax({ type: 'GET', url: ApiClient.getUrl('JellySecurity/snippet'), dataType: 'json' }).then(function (snip) {
+                    applyEdgeSnippet(snip);
+                }).catch(function () { });
+                loadEvents();
+                loadTimeline();
+                loadJellyfinRecord();
+                ApiClient.ajax({ type: 'GET', url: ApiClient.getUrl('JellySecurity/bans'), dataType: 'json' }).then(function (items) {
+                    dashboardBans = items || [];
+                    var banBox = document.querySelector('#BanList');
+                    if (banBox) {
+                        banBox.textContent = '';
+                        if (!dashboardBans.length) {
+                            banBox.textContent = 'No address is blocked.';
+                        } else {
+                            dashboardBans.forEach(function (b) {
+                                var row = document.createElement('div');
+                                row.className = 'js-ban-row' + (b.active ? '' : ' is-ended');
+                                var info = document.createElement('div');
+                                info.className = 'js-ban-info';
+                                var tag = document.createElement('span');
+                                tag.className = 'js-ban-tag ' + (b.active ? 'is-active' : 'is-ended');
+                                tag.textContent = b.active ? 'active' : 'ended';
+                                info.appendChild(tag);
+                                var desc = document.createElement('span');
+                                desc.style.marginLeft = '.4rem';
+                                var parts = [b.target, b.kind, b.createdBy || ''];
+                                if (b.expiresUtc) {
+                                    parts.push('until ' + formatTime(b.expiresUtc));
+                                } else {
+                                    parts.push('no expiry');
+                                }
+                                if (b.reason) { parts.push(b.reason); }
+                                desc.textContent = parts.join(' | ');
+                                info.appendChild(desc);
+                                row.appendChild(info);
+                                if (b.active) {
+                                    var btn = document.createElement('button');
+                                    btn.className = 'js-ban-remove';
+                                    btn.type = 'button';
+                                    btn.textContent = 'Remove';
+                                    btn.setAttribute('data-ban-target', b.target);
+                                    btn.addEventListener('click', function () {
+                                        var target = this.getAttribute('data-ban-target');
+                                        if (!confirm('Remove the block for "' + target + '"?')) { return; }
+                                        ApiClient.ajax({
+                                            type: 'DELETE',
+                                            url: ApiClient.getUrl('JellySecurity/bans') + '?target=' + encodeURIComponent(target)
+                                        }).then(function () { loadStatus(); }).catch(function () { });
+                                    });
+                                    row.appendChild(btn);
+                                }
+                                banBox.appendChild(row);
+                            });
+                        }
+                    }
+                    refreshOpenDetail();
+                    paintActiveEnforcement(dashboardStatus || {}, dashboardBans);
+                }).catch(function () { });
+                ApiClient.ajax({ type: 'GET', url: ApiClient.getUrl('JellySecurity/report?hours=24'), dataType: 'json' }).then(function (r) {
+                    document.querySelector('#ReportBox').textContent = [
+                        'Events ' + r.events,
+                        'Failed ' + r.failed,
+                        'Succeeded ' + r.succeeded,
+                        'Blocked ' + r.blocked,
+                        'Average risk ' + r.averageRiskScore,
+                        (r.dataQuality || []).join('\n')
+                    ].join('\n');
+                }).catch(function () { });
+                ApiClient.ajax({ type: 'GET', url: ApiClient.getUrl('JellySecurity/incidents'), dataType: 'json' }).then(function (items) {
+                    dashboardIncidents = items || [];
+                    document.querySelector('#IncidentList').textContent = dashboardIncidents.map(function (i) {
+                        return [formatTime(i.lastUtc), i.detectorId, i.riskBand, i.count, i.recommendedAction, i.subject, i.explanation].join(' | ');
+                    }).join('\n') || 'No pattern yet.';
+                    refreshOpenDetail();
+                }).catch(function () { });
+                ApiClient.ajax({ type: 'GET', url: ApiClient.getUrl('JellySecurity/audit'), dataType: 'json' }).then(function (items) {
+                    document.querySelector('#AuditList').textContent = (items || []).map(function (e) {
+                        return [formatTime(e.timestampUtc), e.action, e.target, e.detail].join(' | ');
+                    }).join('\n') || 'No setting change yet.';
+                }).catch(function () { });
+            }
+
+            var jellyfinSecurityTypes = {
+                AuthenticationSucceeded: true,
+                AuthenticationFailed: true,
+                UserPasswordChanged: true,
+                UserCreated: true,
+                UserDeleted: true,
+                UserLockedOut: true
+            };
+
+            function jellyfinField(item, pascal, camel) {
+                if (!item) { return ''; }
+                var value = item[pascal];
+                return value == null || value === '' ? (item[camel] || '') : value;
+            }
+
+            function loadJellyfinRecord() {
+                var since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+                var kept = [];
+                var seen = 0;
+
+                function page(start) {
+                    var url = ApiClient.getUrl('System/ActivityLog/Entries', {
+                        startIndex: start,
+                        limit: 100,
+                        minDate: since,
+                        sortBy: 'DateCreated',
+                        sortOrder: 'Descending'
+                    });
+                    return ApiClient.ajax({ type: 'GET', url: url, dataType: 'json' }).then(function (result) {
+                        var items = (result && (result.Items || result.items)) || [];
+                        var total = result && (result.TotalRecordCount || result.totalRecordCount || 0);
+                        seen += items.length;
+                        items.forEach(function (item) {
+                            var type = jellyfinField(item, 'Type', 'type');
+                            if (jellyfinSecurityTypes[type]) { kept.push(item); }
+                        });
+                        if (items.length === 100 && seen < total && start < 200) {
+                            return page(start + 100);
+                        }
+                        return total;
+                    });
+                }
+
+                return page(0).then(function (total) {
+                    var box = document.querySelector('#JellyfinRecord');
+                    var count = document.querySelector('#JellyfinRecordCount');
+                    if (!box) { return; }
+                    var shown = kept.slice(0, 8);
+                    if (!shown.length) {
+                        box.textContent = 'No Jellyfin sign-in or account change in the last 24 hours.';
+                        if (count) { count.textContent = total ? (total + ' activity entries were read.') : ''; }
+                        return;
+                    }
+                    box.textContent = shown.map(function (item) {
+                        return [
+                            jellyfinField(item, 'Date', 'date'),
+                            jellyfinField(item, 'Severity', 'severity'),
+                            jellyfinField(item, 'Type', 'type'),
+                            jellyfinField(item, 'Name', 'name')
+                        ].join(' | ');
+                    }).join('\n');
+                    if (count) {
+                        count.textContent = kept.length > shown.length
+                            ? (shown.length + ' most recent of ' + kept.length + ' in the last 24 hours.')
+                            : (kept.length + ' in the last 24 hours.');
+                    }
+                }).catch(function () {
+                    var box = document.querySelector('#JellyfinRecord');
+                    var count = document.querySelector('#JellyfinRecordCount');
+                    if (box) { box.textContent = 'Jellyfin sign-in records could not be read.'; }
+                    if (count) { count.textContent = ''; }
+                });
+            }
+
+            var eventRowsAll = [];
+            var eventLoadToken = 0;
+            var eventLoadFailed = false;
+            var dashboardSubject = '';
+            var dashboardReturn = null;
+            var dashboardStatus = null;
+            var dashboardBans = null;
+            var dashboardIncidents = null;
+            var dashboardSnippetNote = '';
+            var dashboardSnippetText = 'No snippet yet.';
+
+            function selectedOutcome() {
+                var raw = fieldValue('EventOutcome');
+                if (!raw || raw.toLowerCase() === 'all') { return ''; }
+                return raw;
+            }
+
+            function eventLine(row) {
+                return [formatTime(row.timestampUtc), row.outcome, row.riskBand || '-', row.username || '-', row.address || '-', row.message].join(' | ');
+            }
+
+            function paintEvents(rows) {
+                var box = document.querySelector('#EventList');
+                if (box) {
+                    var outcome = selectedOutcome().toLowerCase();
+                    var shown = (rows || []).filter(function (row) {
+                        return !outcome || String(row.outcome || '').toLowerCase() === outcome;
+                    });
+                    box.textContent = '';
+                    if (!shown.length) {
+                        box.textContent = outcome ? 'No sign-in with that result.' : 'No sign-in recorded yet.';
+                    } else {
+                        var table = detailTable(['Time', 'Result', 'Risk', 'Name', 'Address', 'Reason'], shown.map(function (row) {
+                            return [formatTime(row.timestampUtc), row.outcome, row.riskBand || '-', row.username || '-', row.address || '-', row.message];
+                        }));
+                        box.appendChild(table);
+                    }
+                }
+                if (dashboardSubject === 'attempts') { renderDashboardDetail(); }
+            }
+
+            function loadEvents() {
+                var token = ++eventLoadToken;
+                var outcome = selectedOutcome();
+                // Always load all events for the detail view, then filter client-side.
+                // The previous code fired two requests when a filter was set, causing
+                // a race condition. Now we make one request and filter in paintEvents.
+                return ApiClient.ajax({ type: 'GET', url: ApiClient.getUrl('JellySecurity/events'), dataType: 'json' }).then(function (items) {
+                    if (token !== eventLoadToken) { return; }
+                    eventRowsAll = items || [];
+                    eventLoadFailed = false;
+                    paintEvents(eventRowsAll);
+                    refreshOpenDetail();
+                }).catch(function () {
+                    if (token !== eventLoadToken) { return; }
+                    eventLoadFailed = true;
+                    document.querySelector('#EventList').textContent = 'Sign-in history could not be read.';
+                    refreshOpenDetail();
+                });
+            }
+
+            function applyEventFilter() {
+                if (eventRowsAll.length) { paintEvents(eventRowsAll); }
+                loadEvents();
+            }
+
+            // --- Attack timeline ---
+            var timelineLoadToken = 0;
+
+            function loadTimeline() {
+                var token = ++timelineLoadToken;
+                return ApiClient.ajax({ type: 'GET', url: ApiClient.getUrl('JellySecurity/timeline'), dataType: 'json' }).then(function (stories) {
+                    if (token !== timelineLoadToken) { return; }
+                    paintTimeline(stories || []);
+                }).catch(function () {
+                    if (token !== timelineLoadToken) { return; }
+                    document.querySelector('#TimelineList').textContent = 'Timeline could not be read.';
+                });
+            }
+
+            function riskBadgeClass(band) {
+                if (!band) { return ''; }
+                var b = band.toLowerCase();
+                if (b === 'critical') { return 'js-timeline-badge risk-critical'; }
+                if (b === 'high') { return 'js-timeline-badge risk-high'; }
+                return '';
+            }
+
+            function paintTimeline(stories) {
+                var box = document.querySelector('#TimelineList');
+                if (!box) { return; }
+                box.textContent = '';
+                if (!stories.length) {
+                    box.textContent = 'No attack recorded yet. Failed or blocked sign-in attempts from an address will appear here as a story.';
+                    return;
+                }
+                stories.forEach(function (story) {
+                    var card = document.createElement('div');
+                    card.className = 'js-timeline-story';
+
+                    var header = document.createElement('div');
+                    header.className = 'js-timeline-header';
+
+                    var subject = document.createElement('span');
+                    subject.className = 'js-timeline-subject';
+                    subject.textContent = story.subject || 'unknown';
+                    header.appendChild(subject);
+
+                    if (story.failedCount) {
+                        var fb = document.createElement('span');
+                        fb.className = 'js-timeline-badge failed';
+                        fb.textContent = story.failedCount + ' failed';
+                        header.appendChild(fb);
+                    }
+                    if (story.blockedCount) {
+                        var bb = document.createElement('span');
+                        bb.className = 'js-timeline-badge blocked';
+                        bb.textContent = story.blockedCount + ' blocked';
+                        header.appendChild(bb);
+                    }
+                    if (story.wasBanned) {
+                        var ban = document.createElement('span');
+                        ban.className = 'js-timeline-badge banned';
+                        ban.textContent = 'banned (' + (story.banKind || 'auto') + ')';
+                        header.appendChild(ban);
+                    }
+                    if (story.highestRiskBand) {
+                        var rb = document.createElement('span');
+                        rb.className = riskBadgeClass(story.highestRiskBand);
+                        if (rb.className) {
+                            rb.textContent = story.highestRiskBand;
+                            header.appendChild(rb);
+                        }
+                    }
+
+                    var meta = document.createElement('span');
+                    meta.className = 'js-timeline-meta';
+                    var parts = [story.attemptCount + ' attempts'];
+                    if (story.distinctUsernames > 1) { parts.push(story.distinctUsernames + ' names'); }
+                    parts.push(story.duration);
+                    parts.push(formatTime(story.firstUtc) + ' → ' + formatTime(story.lastUtc));
+                    meta.textContent = parts.join(' · ');
+                    header.appendChild(meta);
+
+                    var body = document.createElement('div');
+                    body.className = 'js-timeline-body';
+
+                    (story.steps || []).forEach(function (step) {
+                        var row = document.createElement('div');
+                        row.className = 'js-timeline-step';
+                        if (step.type === 'Ban') { row.classList.add('ban'); }
+                        else if (step.outcome === 'Blocked') { row.classList.add('blocked'); }
+                        else if (step.outcome === 'Failed') { row.classList.add('failed'); }
+
+                        var time = document.createElement('div');
+                        time.className = 'js-timeline-step-time';
+                        time.textContent = formatTime(step.timestampUtc);
+
+                        var text = document.createElement('div');
+                        text.className = 'js-timeline-step-text';
+                        if (step.username) {
+                            var user = document.createElement('span');
+                            user.className = 'js-timeline-step-user';
+                            user.textContent = step.username;
+                            text.appendChild(user);
+                            text.appendChild(document.createTextNode(' — ' + (step.message || step.outcome)));
+                        } else {
+                            text.textContent = step.message || step.outcome;
+                        }
+
+                        row.appendChild(time);
+                        row.appendChild(text);
+                        body.appendChild(row);
+                    });
+
+                    header.addEventListener('click', function () {
+                        body.classList.toggle('open');
+                    });
+
+                    card.appendChild(header);
+                    card.appendChild(body);
+                    box.appendChild(card);
+                });
+            }
+
+            function withinLast24Hours(value) {
+                var time = Date.parse(value);
+                return !isNaN(time) && time >= Date.now() - 24 * 60 * 60 * 1000;
+            }
+
+            function detailCell(value) {
+                if (value == null || value === '') { return '-'; }
+                return String(value);
+            }
+
+            function detailEmpty(text) {
+                var note = document.createElement('p');
+                note.className = 'fieldDescription';
+                note.textContent = text;
+                return note;
+            }
+
+            function detailTable(headers, records) {
+                var wrap = document.createElement('div');
+                wrap.className = 'js-detail-scroll';
+                var table = document.createElement('table');
+                table.className = 'js-detail-table';
+                var lastIndex = headers.length - 1;
+                var head = document.createElement('thead');
+                var headRow = document.createElement('tr');
+                headers.forEach(function (header, index) {
+                    var cell = document.createElement('th');
+                    cell.scope = 'col';
+                    if (index === lastIndex) { cell.className = 'js-detail-grow'; }
+                    cell.textContent = header;
+                    headRow.appendChild(cell);
+                });
+                head.appendChild(headRow);
+                table.appendChild(head);
+                var body = document.createElement('tbody');
+                records.forEach(function (record) {
+                    var row = document.createElement('tr');
+                    record.forEach(function (value, index) {
+                        var cell = document.createElement('td');
+                        if (index === lastIndex) { cell.className = 'js-detail-grow'; }
+                        cell.textContent = detailCell(value);
+                        row.appendChild(cell);
+                    });
+                    body.appendChild(row);
+                });
+                table.appendChild(body);
+                wrap.appendChild(table);
+                return wrap;
+            }
+
+            function sessionReasonText(reason) {
+                if (reason === 'Both') { return 'New address + too many sessions'; }
+                if (reason === 'NewAddress') { return 'Signed in from a new address'; }
+                return 'Too many sessions at once';
+            }
+
+            function attemptsInLast24Hours() {
+                return (eventRowsAll || []).filter(function (row) {
+                    return withinLast24Hours(row.timestampUtc);
+                });
+            }
+
+            function rowsForOutcome(name) {
+                return attemptsInLast24Hours().filter(function (row) {
+                    return String(row.outcome || '') === name;
+                });
+            }
+
+            function filteredAttemptRows() {
+                var outcome = selectedOutcome().toLowerCase();
+                return attemptsInLast24Hours().filter(function (row) {
+                    return !outcome || String(row.outcome || '').toLowerCase() === outcome;
+                });
+            }
+
+            function fillDetail(countText, node) {
+                document.querySelector('#DashboardDetailCount').textContent = countText;
+                var rows = document.querySelector('#DashboardRows');
+                rows.textContent = '';
+                rows.hidden = false;
+                rows.appendChild(node);
+            }
+
+            function fillDetailRows(records, headers, emptyText, mapper) {
+                if (!records.length) {
+                    fillDetail(String(records.length), detailEmpty(emptyText));
+                    return;
+                }
+                fillDetail(String(records.length), detailTable(headers, records.map(mapper)));
+            }
+
+            function renderDashboardDetail() {
+                if (!dashboardSubject) { return; }
+                var title = document.querySelector('#DashboardDetailTitle');
+                var snippet = document.querySelector('#DashboardSnippet');
+                var rows = document.querySelector('#DashboardRows');
+                if (!title || !snippet || !rows) { return; }
+                var s = dashboardStatus;
+                var names = {
+                    attempts: 'Sign-in attempts, 24h',
+                    failed: 'Rejected by Jellyfin',
+                    blocked: 'Stopped here',
+                    bans: 'Addresses blocked',
+                    incidents: 'Patterns noticed, 24h',
+                    delays: 'Password waits active',
+                    cooldowns: 'Names paused',
+                    lockout: 'Accounts near lockout',
+                    sessions: 'Unfamiliar sessions',
+                    edge: 'Proxy snippet'
+                };
+                title.textContent = dashboardSubject === 'edge' && s && s.edgeSnippetEnabled
+                    ? ((s.edgeSnippetTarget || 'Nginx') + ' proxy snippet')
+                    : (names[dashboardSubject] || '');
+                snippet.hidden = dashboardSubject !== 'edge';
+                if (dashboardSubject === 'edge') {
+                    rows.hidden = true;
+                    rows.textContent = '';
+                    document.querySelector('#DashboardDetailCount').textContent = s
+                        ? (s.edgeSnippetEnabled ? (s.edgeSnippetTarget || 'Nginx') : 'Off')
+                        : '—';
+                    document.querySelector('#DashboardSnippetNote').textContent = dashboardSnippetNote;
+                    document.querySelector('#DashboardSnippetText').textContent = dashboardSnippetText;
+                    return;
+                }
+
+                if (dashboardSubject === 'attempts' || dashboardSubject === 'failed' || dashboardSubject === 'blocked') {
+                    if (eventLoadFailed && !(eventRowsAll || []).length) {
+                        fillDetail('—', detailEmpty('Sign-in history could not be read.'));
+                        return;
+                    }
+                    var attemptRows = dashboardSubject === 'failed'
+                        ? rowsForOutcome('Failed')
+                        : (dashboardSubject === 'blocked' ? rowsForOutcome('Blocked') : filteredAttemptRows());
+                    var attemptEmpty = dashboardSubject === 'failed'
+                        ? 'No sign-in was rejected by Jellyfin.'
+                        : (dashboardSubject === 'blocked'
+                            ? 'Nothing was stopped here.'
+                            : (selectedOutcome() ? 'No sign-in with that result.' : 'No sign-in recorded yet.'));
+                    fillDetailRows(attemptRows, ['Time', 'Name', 'Address', 'Result', 'Reason'], attemptEmpty, function (row) {
+                        return [formatTime(row.timestampUtc), row.username, row.address, row.outcome, row.message];
+                    });
+                    return;
+                }
+
+                if (dashboardSubject === 'bans') {
+                    if (dashboardBans == null) {
+                        fillDetail('—', detailEmpty('No address is blocked.'));
+                        return;
+                    }
+                    var activeBans = dashboardBans.filter(function (ban) { return ban.active; });
+                    fillDetailRows(activeBans, ['Address', 'Kind', 'Status', 'Reason', 'Since', 'Until', 'Set by'], 'No address is blocked.', function (ban) {
+                        return [ban.target, ban.kind, ban.active ? 'active' : 'ended', ban.reason, formatTime(ban.createdUtc), ban.expiresUtc ? formatTime(ban.expiresUtc) : 'no expiry', ban.createdBy];
+                    });
+                    return;
+                }
+
+                if (dashboardSubject === 'incidents') {
+                    if (dashboardIncidents == null) {
+                        fillDetail('—', detailEmpty('No pattern yet.'));
+                        return;
+                    }
+                    var recent = dashboardIncidents.filter(function (item) { return withinLast24Hours(item.lastUtc); });
+                    fillDetailRows(recent, ['Time', 'Detector', 'Subject', 'Count', 'Risk', 'Action', 'Explanation'], 'No pattern yet.', function (item) {
+                        return [formatTime(item.lastUtc), item.detectorId, item.subject, item.count, item.riskBand, item.recommendedAction, item.explanation];
+                    });
+                    return;
+                }
+
+                if (!s) {
+                    fillDetail('—', detailEmpty('Nothing to list.'));
+                    return;
+                }
+
+                if (dashboardSubject === 'delays') {
+                    fillDetailRows(s.passwordDelays || [], ['Address', 'Failures', 'Next wait'], 'No one is waiting.', function (row) {
+                        return [row.address, row.failures, row.nextDelaySeconds + 's'];
+                    });
+                    return;
+                }
+
+                if (dashboardSubject === 'cooldowns') {
+                    fillDetailRows(s.accountCooldowns || [], ['Name', 'Time left', 'Addresses', 'Reason'], 'No name is paused.', function (row) {
+                        return [row.username, row.remainingSeconds + 's left', row.distinctIps, row.reason];
+                    });
+                    return;
+                }
+
+                if (dashboardSubject === 'lockout') {
+                    var watch = s.lockoutWatch || {};
+                    if (!s.lockoutWatchEnabled) {
+                        fillDetail('Off', detailEmpty('This notice is off. Jellyfin\'s counter was not changed.'));
+                        return;
+                    }
+                    if (watch.readFailed) {
+                        fillDetail(String((watch.watches || []).length), detailEmpty('Jellyfin\'s counters could not be read. They were not changed.'));
+                        return;
+                    }
+                    fillDetailRows(watch.watches || [], ['Name', 'Tries', 'Left', 'State'], 'No account is close to its limit.', function (row) {
+                        return [row.username, row.attempts + '/' + row.limit, row.remaining + ' left', row.state === 'Reached' ? 'at the limit' : 'close'];
+                    });
+                    return;
+                }
+
+                if (dashboardSubject === 'sessions') {
+                    if (!s.sessionWatchEnabled) {
+                        fillDetail('Off', detailEmpty('This notice is off. No session is signed out.'));
+                        return;
+                    }
+                    var sessions = (s.sessionWatch && s.sessionWatch.sessions) || [];
+                    fillDetailRows(sessions, ['Name', 'Device', 'Address', 'Playback', 'Title', 'Why'], 'No unfamiliar session.', function (row) {
+                        return [row.username, row.deviceName, row.address, row.playing ? 'playing' : 'not playing', row.title, sessionReasonText(row.reason)];
+                    });
+                }
+            }
+
+            function refreshOpenDetail() {
+                if (dashboardSubject) { renderDashboardDetail(); }
+            }
+
+            function placeEventFilter(inDetail) {
+                var box = document.querySelector('#EventFilterBox');
+                var home = document.querySelector('#EventFilterHome');
+                var slot = document.querySelector('#DashboardDetailFilter');
+                if (!box || !home || !slot) { return; }
+                if (inDetail) {
+                    slot.hidden = false;
+                    slot.appendChild(box);
+                } else {
+                    home.appendChild(box);
+                    slot.hidden = true;
+                }
+            }
+
+            function detailFromTarget(node) {
+                while (node && node.getAttribute) {
+                    if (node.getAttribute('data-detail')) { return node; }
+                    node = node.parentNode;
+                }
+                return null;
+            }
+
+            function markDetailCard(subject) {
+                Array.prototype.forEach.call(document.querySelectorAll('#DashboardMeters [data-detail]'), function (button) {
+                    var on = button.getAttribute('data-detail') === subject;
+                    button.classList.toggle('is-selected', on);
+                    button.setAttribute('aria-pressed', on ? 'true' : 'false');
+                });
+            }
+
+            function openDashboardDetail(subject, source) {
+                if (!subject) { return; }
+                dashboardSubject = subject;
+                dashboardReturn = source || document.querySelector('#DashboardMeters [data-detail="' + subject + '"]');
+                var overview = document.querySelector('#DashboardOverview');
+                var detail = document.querySelector('#DashboardDetail');
+                if (overview) { overview.hidden = true; }
+                if (detail) { detail.hidden = false; }
+                markDetailCard(subject);
+                placeEventFilter(subject === 'attempts');
+                renderDashboardDetail();
+            }
+
+            function closeDashboardDetail() {
+                dashboardSubject = '';
+                placeEventFilter(false);
+                var overview = document.querySelector('#DashboardOverview');
+                var detail = document.querySelector('#DashboardDetail');
+                if (detail) { detail.hidden = true; }
+                if (overview) { overview.hidden = false; }
+                markDetailCard('');
+                if (dashboardReturn && dashboardReturn.focus) { dashboardReturn.focus(); }
+            }
+
+            function applyEdgeSnippet(raw) {
+                // The API may return PascalCase (Enabled) or camelCase (enabled)
+                // depending on the serializer. Normalize to camelCase.
+                var snip = raw || {};
+                var enabled = snip.enabled !== undefined ? snip.enabled : snip.Enabled;
+                var ready = snip.ready !== undefined ? snip.ready : snip.Ready;
+                var text = snip.text !== undefined ? snip.text : snip.Text;
+                var note0 = snip.note !== undefined ? snip.note : snip.Note;
+                var target = snip.target !== undefined ? snip.target : snip.Target;
+                var blocklistIncluded = snip.blocklistIncluded !== undefined ? snip.blocklistIncluded : snip.BlocklistIncluded;
+                var denyCount = snip.denyCount !== undefined ? snip.denyCount : snip.DenyCount;
+
+                var note = document.querySelector('#EdgeSnippetNote');
+                var box = document.querySelector('#EdgeSnippet');
+                var noteText = '';
+                var bodyText = '';
+                if (!enabled) {
+                    noteText = 'The snippet is off. Check "Build a rate-limit snippet for my proxy" above, press Save, then press Refresh.';
+                    bodyText = 'No snippet yet. Turn this on and save when you want text to paste.';
+                } else if (!ready) {
+                    noteText = 'The text could not be built. Check the proxy choice, and use a host and port only (example: 127.0.0.1:8096).';
+                    bodyText = 'No snippet yet.';
+                } else {
+                    var extra = blocklistIncluded
+                        ? ' The current block list is included, and the key is in the text, so do not publish it.'
+                        : ' The block list is not included.';
+                    noteText = 'Ready. Copy the text, paste it into your ' + (target || 'proxy') + ', and reload it. Playback paths are not included. Addresses that can be exported: ' + (denyCount || 0) + '.' + extra;
+                    bodyText = text || '';
+                }
+                if (note) { note.textContent = noteText; }
+                if (box) { box.textContent = bodyText; }
+                dashboardSnippetNote = noteText;
+                dashboardSnippetText = bodyText;
+                if (dashboardSubject === 'edge') { renderDashboardDetail(); }
+            }
+
+            function copyEdgeSnippetText() {
+                var box = document.querySelector('#EdgeSnippet');
+                var text = (box && box.textContent) || '';
+                if (!text || text.indexOf('No snippet') === 0) {
+                    var note = document.querySelector('#EdgeSnippetNote');
+                    if (note) { note.textContent = 'There is no text to copy yet. Check "Build a rate-limit snippet for my proxy" above, press Save, then press Refresh.'; }
+                    return;
+                }
+                var note = document.querySelector('#EdgeSnippetNote');
+                var original = note ? note.textContent : '';
+                var showResult = function (msg) {
+                    if (note) {
+                        note.textContent = msg;
+                        setTimeout(function () { note.textContent = original; }, 2500);
+                    }
+                };
+                // Modern API (requires secure context — https or localhost)
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(text).then(function () {
+                        showResult('Copied to clipboard.');
+                    }).catch(function () {
+                        fallbackCopy(box, showResult);
+                    });
+                } else {
+                    fallbackCopy(box, showResult);
+                }
+            }
+
+            function fallbackCopy(box, showResult) {
+                try {
+                    var range = document.createRange();
+                    range.selectNodeContents(box);
+                    var sel = window.getSelection();
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                    var ok = document.execCommand('copy');
+                    sel.removeAllRanges();
+                    showResult(ok ? 'Copied to clipboard.' : 'Could not copy. Select the text manually and press Ctrl+C.');
+                } catch (e) {
+                    showResult('Could not copy. Select the text manually and press Ctrl+C.');
+                }
+            }
+
+            function geoRow(rule) {
+                var row = document.createElement('div');
+                row.className = 'js-geo-row';
+                var head = document.createElement('div');
+                head.className = 'js-geo-head';
+                var name = document.createElement('input');
+                name.type = 'text';
+                name.className = 'js-geo-name emby-input';
+                name.placeholder = 'Country name — e.g. US';
+                name.value = (rule && rule.Name) || '';
+                head.appendChild(name);
+                var on = document.createElement('label');
+                on.className = 'emby-checkbox-label';
+                var onBox = document.createElement('input');
+                onBox.type = 'checkbox';
+                onBox.className = 'js-geo-on emby-checkbox';
+                onBox.checked = !!(rule && rule.Enabled);
+                on.appendChild(onBox);
+                var onText = document.createElement('span');
+                onText.textContent = 'On';
+                on.appendChild(onText);
+                head.appendChild(on);
+                var fill = document.createElement('button');
+                fill.type = 'button';
+                fill.className = 'js-geo-fill';
+                fill.textContent = 'Fill';
+                head.appendChild(fill);
+                var remove = document.createElement('button');
+                remove.type = 'button';
+                remove.className = 'js-geo-remove';
+                remove.textContent = 'Remove';
+                remove.addEventListener('click', function () { row.remove(); });
+                head.appendChild(remove);
+                row.appendChild(head);
+                var ranges = document.createElement('textarea');
+                ranges.className = 'js-geo-ranges';
+                ranges.rows = 3;
+                ranges.placeholder = '203.0.113.0/24, 198.51.100.0/24';
+                ranges.value = (rule && rule.Ranges) || '';
+                row.appendChild(ranges);
+                fill.addEventListener('click', function () {
+                    var hint = document.querySelector('#GeoBlockHint');
+                    ApiClient.ajax({ type: 'GET', url: ApiClient.getUrl('JellySecurity/geo/lookup') + '?name=' + encodeURIComponent(name.value) }).then(function (res) {
+                        if (res && res.ok) {
+                            ranges.value = res.ranges || '';
+                            if (hint) { hint.textContent = (res.message || 'Filled.') + ' Remember to Save.'; }
+                        } else if (hint) {
+                            hint.textContent = (res && res.message) || 'No ranges found.';
+                        }
+                    }).catch(function () {
+                        if (hint) { hint.textContent = 'Could not read the geo file.'; }
+                    });
+                });
+                return row;
+            }
+
+            function renderGeoBlocks(list) {
+                var box = document.querySelector('#GeoBlockRows');
+                if (!box) { return; }
+                box.textContent = '';
+                (list || []).forEach(function (r) { box.appendChild(geoRow(r)); });
+                if (!list || !list.length) {
+                    var empty = document.createElement('p');
+                    empty.className = 'fieldDescription';
+                    empty.textContent = 'No country is blocked.';
+                    box.appendChild(empty);
+                }
+            }
+
+            function collectGeoBlocks() {
+                var list = [];
+                document.querySelectorAll('.js-geo-row').forEach(function (row) {
+                    var name = row.querySelector('.js-geo-name').value.trim();
+                    var ranges = row.querySelector('.js-geo-ranges').value.trim();
+                    var on = row.querySelector('.js-geo-on').checked;
+                    if (name || ranges) {
+                        list.push({ Name: name, Ranges: ranges, Enabled: on });
+                    }
+                });
+                return list;
+            }
+
+            document.querySelector('#GeoBlockAdd').addEventListener('click', function () {
+                var box = document.querySelector('#GeoBlockRows');
+                var empty = box.querySelector('p.fieldDescription');
+                if (empty) { empty.remove(); }
+                box.appendChild(geoRow(null));
+            });
+
+            document.querySelector('#JellySecurityPage').addEventListener('pageshow', function () {
+                Dashboard.showLoadingMsg();
+                ApiClient.getPluginConfiguration(JellySecurity.id).then(function (config) {
+                    document.querySelector('#Mode').value = config.Mode;
+                    document.querySelector('#AutomaticIpBans').checked = config.AutomaticIpBans;
+                    document.querySelector('#AutomaticIpv6PrefixBan').checked = config.AutomaticIpv6PrefixBan;
+                    document.querySelector('#ApplyManualBans').checked = config.ApplyManualBans;
+                    document.querySelector('#FailuresBeforeBan').value = config.FailuresBeforeBan;
+                    document.querySelector('#FailureWindowMinutes').value = config.FailureWindowMinutes;
+                    document.querySelector('#PasswordDelayEnabled').checked = config.PasswordDelayEnabled;
+                    document.querySelector('#PasswordDelayStepsSeconds').value = config.PasswordDelayStepsSeconds || '1,3,5';
+                    document.querySelector('#PasswordDelayCeilingSeconds').value = config.PasswordDelayCeilingSeconds || 5;
+                    document.querySelector('#PasswordDelayAfterFailures').value = config.PasswordDelayAfterFailures || 1;
+                    document.querySelector('#PasswordDelayWindowMinutes').value = config.PasswordDelayWindowMinutes || 15;
+                    document.querySelector('#PasswordDelayRequireVerifiedAddress').checked = config.PasswordDelayRequireVerifiedAddress;
+                    document.querySelector('#PasswordDelaySkipPrivilegedNetworks').checked = config.PasswordDelaySkipPrivilegedNetworks;
+                    document.querySelector('#AccountCooldownEnabled').checked = config.AccountCooldownEnabled;
+                    document.querySelector('#AccountCooldownMinutes').value = config.AccountCooldownMinutes || 15;
+                    document.querySelector('#AccountCooldownDistinctIps').value = config.AccountCooldownDistinctIps || 5;
+                    document.querySelector('#AccountCooldownFailures').value = config.AccountCooldownFailures || 8;
+                    document.querySelector('#AccountCooldownWindowMinutes').value = config.AccountCooldownWindowMinutes || 15;
+                    document.querySelector('#AccountCooldownSkipPrivilegedNetworks').checked = config.AccountCooldownSkipPrivilegedNetworks;
+                    document.querySelector('#LockoutWatchEnabled').checked = config.LockoutWatchEnabled;
+                    document.querySelector('#LockoutWatchRemaining').value = config.LockoutWatchRemaining || 5;
+                    document.querySelector('#LockoutWatchCooldownMinutes').value = config.LockoutWatchCooldownMinutes || 60;
+                    document.querySelector('#SessionWatchEnabled').checked = config.SessionWatchEnabled;
+                    document.querySelector('#SessionWatchConcurrent').value = config.SessionWatchConcurrent || 4;
+                    document.querySelector('#SessionWatchCooldownMinutes').value = config.SessionWatchCooldownMinutes || 60;
+                    document.querySelector('#SessionWatchRequireVerifiedAddress').checked = config.SessionWatchRequireVerifiedAddress;
+                    document.querySelector('#SessionWatchSkipPrivilegedNetworks').checked = config.SessionWatchSkipPrivilegedNetworks;
+                    document.querySelector('#TrustForwardedFor').checked = config.TrustForwardedFor;
+                    document.querySelector('#KnownProxies').value = config.KnownProxies || '';
+                    document.querySelector('#TrustedNetworks').value = config.TrustedNetworks || '';
+                    document.querySelector('#AdminNetworks').value = config.AdminNetworks || '';
+                    document.querySelector('#MonitoringNetworks').value = config.MonitoringNetworks || '';
+                    document.querySelector('#HoneypotUsername').value = config.HoneypotUsername || '';
+                    document.querySelector('#HoneypotInstantBan').checked = config.HoneypotInstantBan;
+                    document.querySelector('#HoneypotBanMinutes').value = config.HoneypotBanMinutes || 60;
+                    document.querySelector('#EnableBruteForceDetector').checked = config.EnableBruteForceDetector;
+                    document.querySelector('#EnableDistributedDetector').checked = config.EnableDistributedDetector;
+                    document.querySelector('#EnablePasswordSprayDetector').checked = config.EnablePasswordSprayDetector;
+                    document.querySelector('#EnableEnumerationDetector').checked = config.EnableEnumerationDetector;
+                    document.querySelector('#EnableHoneypotDetector').checked = config.EnableHoneypotDetector;
+                    document.querySelector('#EnableAdminTargetDetector').checked = config.EnableAdminTargetDetector;
+                    document.querySelector('#AdministrativeUsernames').value = config.AdministrativeUsernames || '';
+                    document.querySelector('#ReconWatchEnabled').checked = config.ReconWatchEnabled;
+                    document.querySelector('#ReconEnforce').checked = config.ReconEnforce;
+                    document.querySelector('#ReconFailedThreshold').value = config.ReconFailedThreshold || 30;
+                    document.querySelector('#ReconUnauthThreshold').value = config.ReconUnauthThreshold || 120;
+                    document.querySelector('#ReconDistinctPathMin').value = config.ReconDistinctPathMin || 15;
+                    document.querySelector('#ReconWindowMinutes').value = config.ReconWindowMinutes || 5;
+                    document.querySelector('#ReconCooldownMinutes').value = config.ReconCooldownMinutes || 10;
+                    document.querySelector('#AlertCooldownMinutes').value = config.AlertCooldownMinutes;
+                    document.querySelector('#WebhookEnabled').checked = config.WebhookEnabled;
+                    document.querySelector('#WebhookUrl').value = config.WebhookUrl || '';
+                    document.querySelector('#RestrictAdminNetworks').checked = config.RestrictAdminNetworks;
+                    document.querySelector('#ProtectQuickConnect').checked = config.ProtectQuickConnect;
+                    document.querySelector('#ObserveSessions').checked = config.ObserveSessions;
+                    document.querySelector('#CaptchaEnforceWeb').checked = config.CaptchaEnforceWeb;
+                    document.querySelector('#CaptchaFailOpen').checked = config.CaptchaFailOpen;
+                    document.querySelector('#CaptchaChallengeUnknown').checked = config.CaptchaChallengeUnknown;
+                    document.querySelector('#StrictDeviceFingerprint').checked = config.StrictDeviceFingerprint;
+                    document.querySelector('#CaptchaProvider').value = config.CaptchaProvider || 'None';
+                    document.querySelector('#CaptchaSiteKey').value = config.CaptchaSiteKey || '';
+                    document.querySelector('#LocalGeoFile').value = config.LocalGeoFile || '';
+                    document.querySelector('#EdgeChannelEnabled').checked = config.EdgeChannelEnabled;
+                    document.querySelector('#EdgeRestrictToTrustedPeers').checked = config.EdgeRestrictToTrustedPeers;
+                    document.querySelector('#EdgeSnippetEnabled').checked = config.EdgeSnippetEnabled;
+                    document.querySelector('#EdgeSnippetTarget').value = config.EdgeSnippetTarget || 'Nginx';
+                    document.querySelector('#EdgeSnippetUpstream').value = config.EdgeSnippetUpstream || '127.0.0.1:8096';
+                    document.querySelector('#EdgeSnippetAuthPerMinute').value = config.EdgeSnippetAuthPerMinute || 30;
+                    document.querySelector('#EdgeSnippetBurst').value = config.EdgeSnippetBurst === 0 ? 0 : (config.EdgeSnippetBurst || 10);
+                    document.querySelector('#EdgeSnippetIncludeBlocklist').checked = config.EdgeSnippetIncludeBlocklist;
+                    renderGeoBlocks(config.GeoBlocks || []);
+                    refreshGoals();
+                    Dashboard.hideLoadingMsg();
+                    loadStatus();
+                });
+                // Auto-refresh the dashboard every 30 seconds so the meters
+                // and live data stay current without a manual page reload.
+                if (window.jellySecurityRefresh) { clearInterval(window.jellySecurityRefresh); }
+                window.jellySecurityRefresh = setInterval(function () {
+                    loadStatus();
+                    loadTimeline();
+                }, 30000);
+
+                // Live updates via Server-Sent Events. When a sign-in event,
+                // ban, or incident fires, the server pushes a notification
+                // and we refresh immediately instead of waiting 30 seconds.
+                // Falls back to the 30s polling above if SSE is unavailable
+                // (e.g. a proxy that buffers responses).
+                if (window.jellySecurityEventSource) {
+                    try { window.jellySecurityEventSource.close(); } catch (e) { }
+                }
+                try {
+                    var sseUrl = ApiClient.getUrl('JellySecurity/stream');
+                    window.jellySecurityEventSource = new EventSource(sseUrl);
+                    window.jellySecurityEventSource.onmessage = function (evt) {
+                        try {
+                            var data = JSON.parse(evt.data);
+                            // Refresh the relevant section based on the notification type.
+                            loadStatus();
+                            if (data.type === 'event' || data.type === 'ban') {
+                                loadEvents();
+                                loadTimeline();
+                            }
+                        } catch (e) { /* ignore malformed payloads */ }
+                    };
+                    window.jellySecurityEventSource.onerror = function () {
+                        // SSE failed (proxy buffering, network drop, etc.).
+                        // The 30s polling fallback keeps the dashboard current.
+                        try { window.jellySecurityEventSource.close(); } catch (e) { }
+                        window.jellySecurityEventSource = null;
+                    };
+                } catch (e) {
+                    // EventSource not supported — polling fallback is already running.
+                }
+            });
+
+            document.querySelector('#JellySecurityForm').addEventListener('change', refreshGoals);
+
+            document.querySelector('#JellySecurityForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                if (document.activeElement && document.activeElement.id === 'EventOutcome') {
+                    applyEventFilter();
+                    return false;
+                }
+                Dashboard.showLoadingMsg();
+                ApiClient.getPluginConfiguration(JellySecurity.id).then(function (config) {
+                    config.Mode = document.querySelector('#Mode').value;
+                    config.AutomaticIpBans = document.querySelector('#AutomaticIpBans').checked;
+                    config.AutomaticIpv6PrefixBan = document.querySelector('#AutomaticIpv6PrefixBan').checked;
+                    config.ApplyManualBans = document.querySelector('#ApplyManualBans').checked;
+                    config.FailuresBeforeBan = fieldInt('FailuresBeforeBan', config.FailuresBeforeBan);
+                    config.FailureWindowMinutes = fieldInt('FailureWindowMinutes', config.FailureWindowMinutes);
+                    config.PasswordDelayEnabled = document.querySelector('#PasswordDelayEnabled').checked;
+                    config.PasswordDelayStepsSeconds = document.querySelector('#PasswordDelayStepsSeconds').value;
+                    config.PasswordDelayCeilingSeconds = fieldInt('PasswordDelayCeilingSeconds', config.PasswordDelayCeilingSeconds);
+                    config.PasswordDelayAfterFailures = fieldInt('PasswordDelayAfterFailures', config.PasswordDelayAfterFailures);
+                    config.PasswordDelayWindowMinutes = fieldInt('PasswordDelayWindowMinutes', config.PasswordDelayWindowMinutes);
+                    config.PasswordDelayRequireVerifiedAddress = document.querySelector('#PasswordDelayRequireVerifiedAddress').checked;
+                    config.PasswordDelaySkipPrivilegedNetworks = document.querySelector('#PasswordDelaySkipPrivilegedNetworks').checked;
+                    config.AccountCooldownEnabled = document.querySelector('#AccountCooldownEnabled').checked;
+                    config.AccountCooldownMinutes = fieldInt('AccountCooldownMinutes', config.AccountCooldownMinutes);
+                    config.AccountCooldownDistinctIps = fieldInt('AccountCooldownDistinctIps', config.AccountCooldownDistinctIps);
+                    config.AccountCooldownFailures = fieldInt('AccountCooldownFailures', config.AccountCooldownFailures);
+                    config.AccountCooldownWindowMinutes = fieldInt('AccountCooldownWindowMinutes', config.AccountCooldownWindowMinutes);
+                    config.AccountCooldownSkipPrivilegedNetworks = document.querySelector('#AccountCooldownSkipPrivilegedNetworks').checked;
+                    config.LockoutWatchEnabled = document.querySelector('#LockoutWatchEnabled').checked;
+                    config.LockoutWatchRemaining = fieldInt('LockoutWatchRemaining', config.LockoutWatchRemaining);
+                    config.LockoutWatchCooldownMinutes = fieldInt('LockoutWatchCooldownMinutes', config.LockoutWatchCooldownMinutes);
+                    config.SessionWatchEnabled = document.querySelector('#SessionWatchEnabled').checked;
+                    config.SessionWatchConcurrent = fieldInt('SessionWatchConcurrent', config.SessionWatchConcurrent);
+                    config.SessionWatchCooldownMinutes = fieldInt('SessionWatchCooldownMinutes', config.SessionWatchCooldownMinutes);
+                    config.SessionWatchRequireVerifiedAddress = document.querySelector('#SessionWatchRequireVerifiedAddress').checked;
+                    config.SessionWatchSkipPrivilegedNetworks = document.querySelector('#SessionWatchSkipPrivilegedNetworks').checked;
+                    config.TrustForwardedFor = document.querySelector('#TrustForwardedFor').checked;
+                    config.KnownProxies = document.querySelector('#KnownProxies').value;
+                    config.TrustedNetworks = document.querySelector('#TrustedNetworks').value;
+                    config.AdminNetworks = document.querySelector('#AdminNetworks').value;
+                    config.MonitoringNetworks = document.querySelector('#MonitoringNetworks').value;
+                    config.HoneypotUsername = document.querySelector('#HoneypotUsername').value;
+                    config.HoneypotInstantBan = document.querySelector('#HoneypotInstantBan').checked;
+                    config.HoneypotBanMinutes = fieldInt('HoneypotBanMinutes', config.HoneypotBanMinutes);
+                    config.EnableBruteForceDetector = document.querySelector('#EnableBruteForceDetector').checked;
+                    config.EnableDistributedDetector = document.querySelector('#EnableDistributedDetector').checked;
+                    config.EnablePasswordSprayDetector = document.querySelector('#EnablePasswordSprayDetector').checked;
+                    config.EnableEnumerationDetector = document.querySelector('#EnableEnumerationDetector').checked;
+                    config.EnableHoneypotDetector = document.querySelector('#EnableHoneypotDetector').checked;
+                    config.EnableAdminTargetDetector = document.querySelector('#EnableAdminTargetDetector').checked;
+                    config.AdministrativeUsernames = document.querySelector('#AdministrativeUsernames').value;
+                    config.ReconWatchEnabled = document.querySelector('#ReconWatchEnabled').checked;
+                    config.ReconEnforce = document.querySelector('#ReconEnforce').checked;
+                    config.ReconFailedThreshold = fieldInt('ReconFailedThreshold', config.ReconFailedThreshold);
+                    config.ReconUnauthThreshold = fieldInt('ReconUnauthThreshold', config.ReconUnauthThreshold);
+                    config.ReconDistinctPathMin = fieldInt('ReconDistinctPathMin', config.ReconDistinctPathMin);
+                    config.ReconWindowMinutes = fieldInt('ReconWindowMinutes', config.ReconWindowMinutes);
+                    config.ReconCooldownMinutes = fieldInt('ReconCooldownMinutes', config.ReconCooldownMinutes);
+                    config.AlertCooldownMinutes = fieldInt('AlertCooldownMinutes', config.AlertCooldownMinutes);
+                    config.WebhookEnabled = document.querySelector('#WebhookEnabled').checked;
+                    config.WebhookUrl = document.querySelector('#WebhookUrl').value;
+                    config.RestrictAdminNetworks = document.querySelector('#RestrictAdminNetworks').checked;
+                    config.ProtectQuickConnect = document.querySelector('#ProtectQuickConnect').checked;
+                    config.ObserveSessions = document.querySelector('#ObserveSessions').checked;
+                    config.CaptchaEnforceWeb = document.querySelector('#CaptchaEnforceWeb').checked;
+                    config.CaptchaFailOpen = document.querySelector('#CaptchaFailOpen').checked;
+                    config.CaptchaChallengeUnknown = document.querySelector('#CaptchaChallengeUnknown').checked;
+                    config.StrictDeviceFingerprint = document.querySelector('#StrictDeviceFingerprint').checked;
+                    config.CaptchaProvider = document.querySelector('#CaptchaProvider').value;
+                    config.CaptchaSiteKey = document.querySelector('#CaptchaSiteKey').value;
+                    var captchaSecret = document.querySelector('#CaptchaSecret').value;
+                    if (captchaSecret) {
+                        config.CaptchaSecret = captchaSecret;
+                    }
+                    config.LocalGeoFile = document.querySelector('#LocalGeoFile').value;
+                    config.EdgeChannelEnabled = document.querySelector('#EdgeChannelEnabled').checked;
+                    config.EdgeRestrictToTrustedPeers = document.querySelector('#EdgeRestrictToTrustedPeers').checked;
+                    var edgeKey = document.querySelector('#EdgeSharedKey').value;
+                    if (edgeKey) {
+                        config.EdgeSharedKey = edgeKey;
+                    }
+                    config.EdgeSnippetEnabled = document.querySelector('#EdgeSnippetEnabled').checked;
+                    config.EdgeSnippetTarget = document.querySelector('#EdgeSnippetTarget').value;
+                    config.EdgeSnippetUpstream = document.querySelector('#EdgeSnippetUpstream').value;
+                    config.EdgeSnippetAuthPerMinute = fieldInt('EdgeSnippetAuthPerMinute', config.EdgeSnippetAuthPerMinute);
+                    config.EdgeSnippetBurst = fieldInt('EdgeSnippetBurst', config.EdgeSnippetBurst);
+                    config.EdgeSnippetIncludeBlocklist = document.querySelector('#EdgeSnippetIncludeBlocklist').checked;
+                    config.GeoBlocks = collectGeoBlocks();
+                    ApiClient.updatePluginConfiguration(JellySecurity.id, config).then(function (result) {
+                        Dashboard.processPluginConfigurationUpdateResult(result);
+                        // Clear secret fields after save so the saved value is not left on screen.
+                        var secret = document.querySelector('#CaptchaSecret');
+                        if (secret) { secret.value = ''; }
+                        var key = document.querySelector('#EdgeSharedKey');
+                        if (key) { key.value = ''; }
+                        // Reload live data so meters reflect the new settings immediately.
+                        loadStatus();
+                    });
+                });
+                return false;
+            });
+
+            document.querySelector('#ClearCooldownButton').addEventListener('click', function () {
+                var nameInput = document.querySelector('#CooldownClearName');
+                var name = nameInput ? nameInput.value.trim() : '';
+                if (!name) { return; }
+                ApiClient.ajax({
+                    type: 'POST',
+                    url: ApiClient.getUrl('JellySecurity/cooldowns/clear'),
+                    data: JSON.stringify({ Username: name }),
+                    contentType: 'application/json'
+                }).then(function (body) {
+                    var state = document.querySelector('#HoneypotState');
+                    // Show a brief success message near the button.
+                    var resultEl = nameInput.parentElement.parentElement.querySelector('#CooldownResult');
+                    if (!resultEl) {
+                        resultEl = document.createElement('p');
+                        resultEl.id = 'CooldownResult';
+                        resultEl.className = 'fieldDescription';
+                        nameInput.parentElement.parentElement.appendChild(resultEl);
+                    }
+                    resultEl.textContent = body && body.removed
+                        ? 'The pause for "' + name + '" was ended.'
+                        : 'No pause was found for "' + name + '". It may have already expired.';
+                    nameInput.value = '';
+                    loadStatus();
+                }).catch(function () {
+                    var resultEl = document.querySelector('#CooldownResult');
+                    if (!resultEl) {
+                        resultEl = document.createElement('p');
+                        resultEl.id = 'CooldownResult';
+                        resultEl.className = 'fieldDescription';
+                        document.querySelector('#CooldownClearName').parentElement.parentElement.appendChild(resultEl);
+                    }
+                    resultEl.textContent = 'Could not reach the plugin. Try again.';
+                });
+            });
+
+            document.querySelector('#CloseSessionsButton').addEventListener('click', function () {
+                var nameInput = document.querySelector('#SessionCloseName');
+                var name = nameInput ? nameInput.value.trim() : '';
+                var result = document.querySelector('#SessionCloseResult');
+                if (!name) {
+                    if (result) { result.textContent = 'A username is required.'; }
+                    return;
+                }
+                if (!confirm('Sign out all devices for "' + name + '" that are not playing anything?')) { return; }
+                ApiClient.ajax({
+                    type: 'POST',
+                    url: ApiClient.getUrl('JellySecurity/sessions/close-others'),
+                    data: JSON.stringify({ Username: name }),
+                    contentType: 'application/json'
+                }).then(function (body) {
+                    if (result) {
+                        result.textContent = (body.closed || 0) + ' device(s) that were not playing were signed out. Playback stayed up on ' + (body.sparedPlayback || 0) + '.';
+                    }
+                    if (nameInput) { nameInput.value = ''; }
+                    loadStatus();
+                }).catch(function () {
+                    if (result) { result.textContent = 'Nothing was signed out. Check the name, and that this notice is saved and on.'; }
+                });
+            });
+
+            document.querySelector('#AddBanButton').addEventListener('click', function () {
+                var targetInput = document.querySelector('#ManualTarget');
+                var reasonInput = document.querySelector('#ManualReason');
+                var minutesInput = document.querySelector('#ManualMinutes');
+                var err = document.querySelector('#BanError');
+                err.textContent = '';
+                var target = targetInput ? targetInput.value.trim() : '';
+                if (!target) {
+                    err.textContent = 'An address or range is required.';
+                    return;
+                }
+                var minutesRaw = minutesInput ? minutesInput.value.trim() : '';
+                var minutes = null;
+                if (minutesRaw) {
+                    var parsed = parseInt(minutesRaw, 10);
+                    if (isNaN(parsed) || parsed < 1) {
+                        err.textContent = 'Minutes must be a positive number, or left empty for no expiry.';
+                        return;
+                    }
+                    minutes = parsed;
+                }
+                ApiClient.ajax({
+                    type: 'POST',
+                    url: ApiClient.getUrl('JellySecurity/bans'),
+                    data: JSON.stringify({
+                        Target: target,
+                        Reason: reasonInput ? reasonInput.value : '',
+                        Minutes: minutes
+                    }),
+                    contentType: 'application/json'
+                }).then(function () {
+                    err.textContent = '"' + target + '" was blocked.';
+                    if (targetInput) { targetInput.value = ''; }
+                    if (reasonInput) { reasonInput.value = ''; }
+                    if (minutesInput) { minutesInput.value = ''; }
+                    loadStatus();
+                }).catch(function (xhr) {
+                    err.textContent = (xhr && xhr.responseJSON && xhr.responseJSON.message) || 'That address was not blocked. Check the address or range.';
+                });
+            });
+
+            document.querySelector('#RefreshEvents').addEventListener('click', function () {
+                loadEvents();
+                loadJellyfinRecord();
+            });
+            var refreshTimelineBtn = document.querySelector('#RefreshTimeline');
+            if (refreshTimelineBtn) {
+                refreshTimelineBtn.addEventListener('click', function () {
+                    loadTimeline();
+                });
+            }
+            var eventOutcome = document.querySelector('#EventOutcome');
+            if (eventOutcome) {
+                eventOutcome.addEventListener('change', function (e) {
+                    e.stopPropagation();
+                    applyEventFilter();
+                });
+                eventOutcome.addEventListener('keydown', function (e) {
+                    if (e.key !== 'Enter') { return; }
+                    e.preventDefault();
+                    e.stopPropagation();
+                    applyEventFilter();
+                });
+            }
+            document.querySelector('#CopyEdgeSnippet').addEventListener('click', copyEdgeSnippetText);
+            var refreshEdgeBtn = document.querySelector('#RefreshEdgeSnippet');
+            if (refreshEdgeBtn) {
+                refreshEdgeBtn.addEventListener('click', function () {
+                    var note = document.querySelector('#EdgeSnippetNote');
+                    if (note) { note.textContent = 'Loading…'; }
+                    ApiClient.ajax({ type: 'GET', url: ApiClient.getUrl('JellySecurity/snippet'), dataType: 'json' }).then(function (snip) {
+                        applyEdgeSnippet(snip);
+                    }).catch(function () {
+                        if (note) { note.textContent = 'Could not load the snippet. Try saving first.'; }
+                    });
+                });
+            }
+            var copyDashboardSnippet = document.querySelector('#CopyDashboardSnippet');
+            if (copyDashboardSnippet) {
+                copyDashboardSnippet.addEventListener('click', copyEdgeSnippetText);
+            }
+            var dashboardMeters = document.querySelector('#DashboardMeters');
+            if (dashboardMeters) {
+                dashboardMeters.addEventListener('click', function (e) {
+                    var button = detailFromTarget(e.target);
+                    if (!button) { return; }
+                    openDashboardDetail(button.getAttribute('data-detail'), button);
+                });
+            }
+            var dashboardBack = document.querySelector('#DashboardBack');
+            if (dashboardBack) {
+                dashboardBack.addEventListener('click', closeDashboardDetail);
+            }
+            document.querySelector('#ExportEvents').addEventListener('click', function () {
+                var outcome = selectedOutcome();
+                var url = ApiClient.getUrl('JellySecurity/events.csv');
+                if (outcome) {
+                    url += (url.indexOf('?') >= 0 ? '&' : '?') + 'outcome=' + encodeURIComponent(outcome);
+                }
+                ApiClient.ajax({ type: 'GET', url: url, dataType: 'text' }).then(function (csv) {
+                    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+                    var link = document.createElement('a');
+                    var href = URL.createObjectURL(blob);
+                    link.href = href;
+                    link.download = 'jelly-security-events.csv';
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    URL.revokeObjectURL(href);
+                }).catch(function () {
+                    document.querySelector('#EventList').textContent = 'Sign-in history could not be read.';
+                });
+            });
+            var downloadReport = document.querySelector('#DownloadReport');
+            if (downloadReport) {
+                downloadReport.addEventListener('click', function () {
+                    ApiClient.ajax({ type: 'GET', url: ApiClient.getUrl('JellySecurity/report?hours=24'), dataType: 'json' }).then(function (r) {
+                        var lines = [
+                            'Jelly Security report — last ' + r.hours + ' hours',
+                            'Generated ' + new Date().toISOString(),
+                            '',
+                            'Events:            ' + r.events,
+                            'Failed:            ' + r.failed,
+                            'Succeeded:         ' + r.succeeded,
+                            'Blocked:           ' + r.blocked,
+                            'Incidents:         ' + r.incidents,
+                            'Active bans:       ' + r.activeBans,
+                            'Average risk score: ' + r.averageRiskScore,
+                            ''
+                        ];
+                        if ((r.topSignals || []).length) {
+                            lines.push('Top signals:');
+                            r.topSignals.forEach(function (s) { lines.push('  ' + s); });
+                            lines.push('');
+                        }
+                        if ((r.dataQuality || []).length) {
+                            lines.push('About these numbers:');
+                            r.dataQuality.forEach(function (q) { lines.push('  - ' + q); });
+                        }
+                        var blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+                        var a = document.createElement('a');
+                        a.href = URL.createObjectURL(blob);
+                        a.download = 'jelly-security-report-' + new Date().toISOString().slice(0, 10) + '.txt';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+                    }).catch(function () {
+                        var box = document.querySelector('#ReportBox');
+                        if (box) { box.textContent = 'Report could not be read. The plugin may be unreachable.'; }
+                    });
+                });
+            }
+            document.querySelector('#ExportBackup').addEventListener('click', function () {
+                var result = document.querySelector('#BackupResult');
+                if (result) { result.textContent = 'Building backup…'; }
+                var url = ApiClient.getUrl('JellySecurity/backup');
+                ApiClient.ajax({ type: 'GET', url: url, dataType: 'text' }).then(function (text) {
+                    // Trigger a real download in the browser
+                    var blob = new Blob([text], { type: 'application/json' });
+                    var a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = 'jelly-security-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+                    if (result) { result.textContent = 'Backup downloaded. Secrets are redacted in the file.'; }
+                }).catch(function () {
+                    if (result) { result.textContent = 'Could not build the backup. The plugin may be unreachable.'; }
+                });
+            });
+            document.querySelector('#PreviewBackup').addEventListener('click', function () {
+                var result = document.querySelector('#BackupResult');
+                var json = document.querySelector('#BackupJson').value;
+                if (!json.trim()) {
+                    if (result) { result.textContent = 'Paste a backup JSON first.'; }
+                    return;
+                }
+                if (result) { result.textContent = 'Previewing…'; }
+                ApiClient.ajax({
+                    type: 'POST',
+                    url: ApiClient.getUrl('JellySecurity/backup/preview'),
+                    data: JSON.stringify({ Json: json }),
+                    contentType: 'application/json',
+                    dataType: 'json'
+                }).then(function (p) {
+                    if (!result) { return; }
+                    if (p.ok) {
+                        var lines = ['Preview OK. ' + (p.message || '')];
+                        var changes = p.changes || [];
+                        if (changes.length) {
+                            lines.push('What would change:');
+                            changes.forEach(function (c) { lines.push('• ' + c); });
+                        } else {
+                            lines.push('No changes detected — the backup matches the current settings.');
+                        }
+                        lines.push('Nothing has been applied yet. Click "Apply the previewed import" to proceed.');
+                        result.textContent = lines.join('\n');
+                    } else {
+                        result.textContent = 'Preview failed: ' + (p.message || 'Unknown error.');
+                    }
+                }).catch(function (xhr) {
+                    if (!result) { return; }
+                    var msg = 'The preview was refused.';
+                    if (xhr && xhr.responseText) {
+                        try { var body = JSON.parse(xhr.responseText); if (body && body.message) { msg = 'Preview failed: ' + body.message; } } catch (e) { }
+                    }
+                    result.textContent = msg + ' Check the backup text and try again.';
+                });
+            });
+            document.querySelector('#RestoreBackup').addEventListener('click', function () {
+                var result = document.querySelector('#BackupResult');
+                var json = document.querySelector('#BackupJson').value;
+                if (!json.trim()) {
+                    if (result) { result.textContent = 'Paste a backup JSON first, then click Preview.'; }
+                    return;
+                }
+                if (!confirm('Apply this backup?\n\nCurrent settings and bans will be replaced.\nSecrets on the server (webhook, honeypot, captcha, edge key) are kept.')) { return; }
+                if (result) { result.textContent = 'Applying…'; }
+                ApiClient.ajax({
+                    type: 'POST',
+                    url: ApiClient.getUrl('JellySecurity/backup/restore'),
+                    data: JSON.stringify({ Json: json }),
+                    contentType: 'application/json',
+                    dataType: 'json'
+                }).then(function (p) {
+                    if (result) { result.textContent = (p.message || 'Backup applied.') + ' ' + (p.bans !== undefined ? p.bans + ' ban(s) restored.' : ''); }
+                    loadStatus();
+                }).catch(function (xhr) {
+                    if (!result) { return; }
+                    var msg = 'The import was not applied.';
+                    if (xhr && xhr.responseText) {
+                        try { var body = JSON.parse(xhr.responseText); if (body && body.message) { msg = body.message; } } catch (e) { }
+                    }
+                    result.textContent = msg + ' Check the backup text and try Preview first.';
+                });
+            });
+
+            var securityTabs = document.querySelector('#JellySecurityTabs');
+            if (securityTabs) {
+                securityTabs.addEventListener('click', function (e) {
+                    var tab = tabFromTarget(e.target);
+                    if (!tab) { return; }
+                    selectSecurityTab(tab);
+                });
+                securityTabs.addEventListener('keydown', function (e) {
+                    var tabs = Array.prototype.slice.call(securityTabs.querySelectorAll('[role="tab"]'));
+                    var index = tabs.indexOf(document.activeElement);
+                    if (index < 0) { return; }
+                    var next = -1;
+                    if (e.key === 'ArrowRight') {
+                        next = (index + 1) % tabs.length;
+                    } else if (e.key === 'ArrowLeft') {
+                        next = (index - 1 + tabs.length) % tabs.length;
+                    } else if (e.key === 'Home') {
+                        next = 0;
+                    } else if (e.key === 'End') {
+                        next = tabs.length - 1;
+                    } else {
+                        return;
+                    }
+                    e.preventDefault();
+                    selectSecurityTab(tabs[next]);
+                    tabs[next].focus();
+                });
+            }
+        </script>
+    </div>
+</body>
+</html>

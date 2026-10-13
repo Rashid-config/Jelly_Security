@@ -1,0 +1,20 @@
+---
+name: "Jelly Security"
+guid: "8b4e2c1a-6d3f-4a19-9e2b-7c5f1d8a0b34"
+version: "0.21.1.0"
+targetAbi: "12.2.0.0"
+framework: "net10.0"
+overview: "Optional sign-in protection for Jellyfin 12.2. Playback is left alone."
+description: >
+  Watches sign-in, keeps plugin-owned records, and can slow, pause, or block
+  sign-in traffic when an administrator enables those options. Jellyfin still
+  checks the password. Playback is not classified or delayed.
+category: "General"
+owner: "RASHID AL SAIDI"
+artifacts:
+- "Jellyfin.Plugin.JellySecurity.dll"
+changelog: >
+  Audit hardening: sign-in failure accounting restricted to credential
+  routes, per-file store durability, pending-write flush on shutdown,
+  redacted-backup restore fix, recon 429 slow-down controls, and
+  official client recognition for device fingerprinting.
