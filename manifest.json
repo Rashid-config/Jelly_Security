@@ -6,6 +6,7 @@
     "description": "Watches sign-in, keeps plugin-owned records, and can slow, pause, or block sign-in traffic when an administrator enables those options. Jellyfin still checks the password.",
     "owner": "RASHID AL SAIDI",
     "category": "General",
+    "imageUrl": "https://raw.githubusercontent.com/Rashid-config/Jelly_Security/main/docs/icon.png",
     "versions": [
       {
         "version": "0.21.1.0",
