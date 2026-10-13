@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/logo.png" alt="Jelly Security" width="640">
+</p>
+
 # Jelly Security
 
 **Jelly Security** is a plugin for Jellyfin 12.2. It watches sign-in, keeps its own records, and can slow, pause, or block sign-in traffic when an administrator turns those options on.
@@ -6,7 +10,7 @@ Jellyfin still checks the password. The plugin does not replace users, passwords
 
 | | |
 |---|---|
-| Version | 0.21.0 |
+| Version | 0.21.1.0 |
 | Jellyfin | 12.2.0 |
 | Runtime | .NET 10 (`net10.0`) |
 | Dashboard name | Jelly Security |
