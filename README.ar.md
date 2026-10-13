@@ -24,9 +24,9 @@ Jellyfin تبقى هي التي تتحقق من كلمة المرور. الإض�
 |---|---|
 | ![تسجيل الدخول](docs/screenshots/signin-delay.png) | ![الكشف](docs/screenshots/detection.png) |
 
-| حظر العناوين | الجلسات |
+| إعدادات CAPTCHA والطُعم | الجلسات |
 |---|---|
-| ![العناوين](docs/screenshots/addresses.png) | ![الجلسات](docs/screenshots/sessions.png) |
+| ![إعدادات كابتشا](docs/screenshots/signin-cooldown.png) | ![الجلسات](docs/screenshots/sessions.png) |
 
 | نصوص الوكيل | النسخ الاحتياطي والتنبيهات |
 |---|---|

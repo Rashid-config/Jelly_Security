@@ -24,9 +24,9 @@ Jellyfin still checks the password. The plugin does not replace users, passwords
 |---|---|
 | ![Sign-in](docs/screenshots/signin-delay.png) | ![Detection](docs/screenshots/detection.png) |
 
-| Address blocking | Sessions |
+| CAPTCHA and decoy settings | Sessions |
 |---|---|
-| ![Addresses](docs/screenshots/addresses.png) | ![Sessions](docs/screenshots/sessions.png) |
+| ![CAPTCHA settings](docs/screenshots/signin-cooldown.png) | ![Sessions](docs/screenshots/sessions.png) |
 
 | Edge snippets | Backup and alerts |
 |---|---|
